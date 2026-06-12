@@ -1,73 +1,77 @@
-# React + TypeScript + Vite
+# 💍 프리미엄 모바일 청첩장 빌더 (Premium Wedding Invitation)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+이 프로젝트는 신랑, 신부의 소중한 순간을 우아하고 세련되게 담아낼 수 있는 **하이엔드 매거진 스타일의 모바일 청첩장 제작 서비스**입니다.
 
-Currently, two official plugins are available:
+사용자가 정보를 입력하는 즉시 결과물을 확인할 수 있는 실시간 인터랙티브 경험을 제공하며, 심플하면서도 고급스러운 에디토리얼 디자인을 통해 한 편의 영화 같은 청첩장을 완성합니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✨ 주요 기능 (Key Features)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. 매거진 에디토리얼 디자인
+- 하이엔드 웨딩 잡지에서 영감을 받은 세련된 타이포그래피와 레이아웃을 제공합니다.
+- 넓은 여백과 미니멀한 라인을 활용하여 품격 있는 시각적 경험을 선사합니다.
 
-## Expanding the ESLint configuration
+### 2. 실시간 미리보기 (Real-time Preview)
+- **스플릿 스크린 모드**: 데스크톱 환경에서 왼쪽의 입력 폼에 정보를 입력하면, 오른쪽의 모바일 프레임 화면에 결과가 즉시 반영됩니다.
+- 입력하는 과정 자체가 하나의 즐거운 기록이 되도록 설계되었습니다.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 3. 직관적인 6단계 정보 입력
+- **신랑·신부**: 기본 인적 사항 및 연락처 입력
+- **혼주 정보**: 양가 부모님 성함 관리
+- **일시 및 장소**: 날짜, 시간 및 장소 상세 정보
+- **초대하는 글**: 진심을 담은 감성적인 인사말 작성
+- **마음 전하실 곳**: 축의금 계좌 정보 (복사 기능 포함)
+- **이미지 및 설정**: 로컬 이미지 업로드 및 카카오 공유 키 설정
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 4. 이미지 업로드 지원
+- 외부 URL 입력은 물론, 내 컴퓨터에 있는 **PNG, JPG 파일**을 직접 업로드하여 갤러리를 채울 수 있습니다.
+- 업로드된 이미지는 즉시 미리보기에 반영되어 조화로운 배치를 확인할 수 있습니다.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 5. 완벽한 모바일 대응
+- 청첩장 본문은 모바일 기기에 최적화된 반응형 디자인으로 제작되었습니다.
+- 카카오맵/네이버 지도 연결 및 계좌번호 복사 등 실용적인 기능을 포함합니다.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 🛠 기술 스택 (Tech Stack)
+
+- **Frontend**: React 19, TypeScript
+- **Styling**: Tailwind CSS
+- **Motion**: Framer Motion (애니메이션 효과)
+- **Icons**: Lucide React
+- **Build Tool**: Vite
+
+---
+
+## 🚀 시작하기 (Getting Started)
+
+### 로컬 개발 환경 실행
+
+1. 저장소를 클론합니다.
+```bash
+git clone https://github.com/hamaraman/-.git
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. 의존성 패키지를 설치합니다.
+```bash
+npm install
 ```
+
+3. 로컬 서버를 실행합니다.
+```bash
+npm run dev
+```
+
+4. 브라우저에서 `http://localhost:5173`에 접속합니다.
+
+---
+
+## 📸 스크린샷 가이드
+
+- **입력 화면**: 미니멀한 럭셔리 스타일의 UI와 단계별 진행 표시
+- **미리보기**: 실제 모바일 기기에서 보는 것과 동일한 고충실도(High-fidelity) 화면
+
+---
+
+© 2026 Premium Wedding Invitation. All rights reserved.
