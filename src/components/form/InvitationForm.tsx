@@ -42,10 +42,18 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
       const next = { ...prev };
       if (target === 'groom') next.groom = { ...next.groom, [field]: value };
       else if (target === 'bride') next.bride = { ...next.bride, [field]: value };
-      else if (target === 'groomParents.father') next.groomParents.father = { ...next.groomParents.father, [field]: value };
-      else if (target === 'groomParents.mother') next.groomParents.mother = { ...next.groomParents.mother, [field]: value };
-      else if (target === 'brideParents.father') next.brideParents.father = { ...next.brideParents.father, [field]: value };
-      else if (target === 'brideParents.mother') next.brideParents.mother = { ...next.brideParents.mother, [field]: value };
+      else if (target === 'groomParents.father') {
+        next.groomParents.father = { ...(next.groomParents.father || { name: '', phoneNumber: '' }), [field]: value } as Person;
+      }
+      else if (target === 'groomParents.mother') {
+        next.groomParents.mother = { ...(next.groomParents.mother || { name: '', phoneNumber: '' }), [field]: value } as Person;
+      }
+      else if (target === 'brideParents.father') {
+        next.brideParents.father = { ...(next.brideParents.father || { name: '', phoneNumber: '' }), [field]: value } as Person;
+      }
+      else if (target === 'brideParents.mother') {
+        next.brideParents.mother = { ...(next.brideParents.mother || { name: '', phoneNumber: '' }), [field]: value } as Person;
+      }
       return next;
     });
   };
