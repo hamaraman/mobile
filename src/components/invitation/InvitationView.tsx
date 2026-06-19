@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { WeddingData } from '../../types/wedding';
 import { getThemeAccent } from '../../utils/themes';
 import MainVisual from './MainVisual';
@@ -16,10 +16,16 @@ interface Props {
 const InvitationView: React.FC<Props> = ({ data }) => {
   const accent = getThemeAccent(data.theme);
 
+  useEffect(() => {
+    document.documentElement.style.setProperty('--color-wedding-accent', accent);
+    return () => {
+      document.documentElement.style.removeProperty('--color-wedding-accent');
+    };
+  }, [accent]);
+
   return (
     <div
       className="max-w-screen-sm mx-auto bg-white shadow-xl min-h-screen pb-20 overflow-x-hidden"
-      style={{ '--color-wedding-accent': accent } as React.CSSProperties}
     >
       <MainVisual data={data} />
       <GreetingSection
