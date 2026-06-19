@@ -41,7 +41,7 @@ function krFallback(text: string) {
 }
 
 /* ─── Naver Map ─── */
-const NaverMap: React.FC<{ location: Props['location']; clientId: string }> = ({ location, clientId }) => {
+const NaverMap: React.FC<{ location: Props['location']; clientId: string; onAuthFail: () => void }> = ({ location, clientId, onAuthFail }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<Status>('loading');
 
@@ -85,7 +85,15 @@ const NaverMap: React.FC<{ location: Props['location']; clientId: string }> = ({
         infoWindow.open(map, marker);
       }
 
-      if (!cancelled) setStatus('ok');
+      if (!cancelled) {
+        setStatus('ok');
+        // Detect Naver auth failure overlay injected into the map container
+        setTimeout(() => {
+          if (!cancelled && containerRef.current?.textContent?.includes('인증이 실패')) {
+            onAuthFail();
+          }
+        }, 1500);
+      }
     };
 
     const geocodeAndInit = () => {
@@ -260,6 +268,8 @@ const OsmMap: React.FC<{ location: Props['location'] }> = ({ location }) => {
 
 /* ─── Main MapSection ─── */
 const MapSection: React.FC<Props> = ({ location, naverClientId }) => {
+  const [useNaver, setUseNaver] = useState(!!naverClientId);
+
   const openKakao = () =>
     window.open(`https://map.kakao.com/link/search/${encodeURIComponent(location.name || location.address)}`, '_blank');
   const openNaver = () =>
@@ -268,8 +278,8 @@ const MapSection: React.FC<Props> = ({ location, naverClientId }) => {
   return (
     <section className="py-12 px-6 space-y-4">
       <div className="relative w-full h-[300px] rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-        {naverClientId
-          ? <NaverMap location={location} clientId={naverClientId} />
+        {useNaver && naverClientId
+          ? <NaverMap location={location} clientId={naverClientId} onAuthFail={() => setUseNaver(false)} />
           : <OsmMap location={location} />
         }
       </div>
