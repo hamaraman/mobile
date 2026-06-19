@@ -15,8 +15,6 @@ const MapSection: React.FC<Props> = ({ location }) => {
     window.open(`https://map.kakao.com/link/search/${encodeURIComponent(location.name || location.address)}`, '_blank');
   const openNaver = () =>
     window.open(`https://map.naver.com/v5/search/${encodeURIComponent(location.name || location.address)}`, '_blank');
-  const openGoogle = () =>
-    window.open(`https://www.google.com/maps/search/${encodeURIComponent(`${location.name} ${location.address}`)}`, '_blank');
 
   return (
     <section className="py-12 px-6 space-y-4">
@@ -38,9 +36,6 @@ const MapSection: React.FC<Props> = ({ location }) => {
         </button>
         <button onClick={openNaver} className="flex-1 py-3 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-colors text-wedding-primary">
           네이버 지도
-        </button>
-        <button onClick={openGoogle} className="flex-1 py-3 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-colors text-wedding-primary">
-          구글 지도
         </button>
       </div>
     </section>
