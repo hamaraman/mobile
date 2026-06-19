@@ -18,7 +18,7 @@ const WeddingInfo: React.FC<Props> = ({ date, time, location }) => {
     : '2026년 10월 24일';
 
   return (
-    <section className="py-20 bg-[#FAF9F7] px-8 text-center">
+    <section className="py-20 px-8 text-center" style={{ background: 'var(--t-section-bg, #FAF9F7)' }}>
       <h2 className="text-xl tracking-[0.2em] text-wedding-accent mb-12">LOCATION</h2>
       
       <div className="space-y-8 serif">

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import type { WeddingData } from '../../types/wedding';
-import { getThemeAccent } from '../../utils/themes';
+import { getTemplate } from '../../utils/templates';
 import MainVisual from './MainVisual';
 import GreetingSection from './GreetingSection';
 import WeddingInfo from './WeddingInfo';
@@ -14,18 +14,29 @@ interface Props {
 }
 
 const InvitationView: React.FC<Props> = ({ data }) => {
-  const accent = getThemeAccent(data.theme);
+  const tpl = getTemplate(data.template);
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--color-wedding-accent', accent);
+    const root = document.documentElement;
+    root.style.setProperty('--color-wedding-accent', tpl.accent);
+    root.style.setProperty('--color-wedding-primary', tpl.primary);
+    root.style.setProperty('--color-wedding-secondary', tpl.secondary);
+    root.style.setProperty('--t-main-bg', tpl.mainBg);
+    root.style.setProperty('--t-section-bg', tpl.sectionBg);
+    root.style.setProperty('--t-page-bg', tpl.pageBg);
+    root.style.setProperty('--t-card-bg', tpl.cardBg);
     return () => {
-      document.documentElement.style.removeProperty('--color-wedding-accent');
+      ['--color-wedding-accent','--color-wedding-primary','--color-wedding-secondary',
+       '--t-main-bg','--t-section-bg','--t-page-bg','--t-card-bg'].forEach(v =>
+        root.style.removeProperty(v)
+      );
     };
-  }, [accent]);
+  }, [tpl]);
 
   return (
     <div
-      className="max-w-screen-sm mx-auto bg-white shadow-xl min-h-screen pb-20 overflow-x-hidden"
+      className="max-w-screen-sm mx-auto shadow-xl min-h-screen pb-20 overflow-x-hidden"
+      style={{ background: tpl.pageBg }}
     >
       <MainVisual data={data} />
       <GreetingSection

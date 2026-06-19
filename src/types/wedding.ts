@@ -1,4 +1,6 @@
-export type ThemeKey = 'rose' | 'blush' | 'sage' | 'navy' | 'gold';
+import type { TemplateKey } from '../utils/templates';
+
+export type { TemplateKey };
 
 export type Person = {
   name: string;
@@ -21,8 +23,8 @@ export type WeddingData = {
     father?: Person;
     mother?: Person;
   };
-  weddingDate: string; // ISO string
-  weddingTime: string; // HH:mm
+  weddingDate: string;
+  weddingTime: string;
   location: {
     name: string;
     address: string;
@@ -36,5 +38,5 @@ export type WeddingData = {
   };
   galleryImages: string[];
   kakaoApiKey?: string;
-  theme?: ThemeKey;
+  template?: TemplateKey;
 }

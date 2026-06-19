@@ -51,7 +51,7 @@ const MainVisual: React.FC<Props> = ({ data }) => {
   }, [data.weddingDate, data.weddingTime]);
 
   return (
-    <section className="relative h-[80vh] flex flex-col items-center justify-center bg-[#FDFBF7] overflow-hidden">
+    <section className="relative h-[80vh] flex flex-col items-center justify-center overflow-hidden" style={{ background: 'var(--t-main-bg, #FDFBF7)' }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

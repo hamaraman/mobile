@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { WeddingData, Person } from '../../types/wedding';
-import { THEMES } from '../../utils/themes';
+import { TEMPLATES } from '../../utils/templates';
 
 interface Props {
   onComplete: (data: WeddingData) => void;
@@ -20,6 +20,7 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
     location: { name: '', address: '', detailAddress: '' },
     greeting: { title: '모시는 글', content: '' },
     galleryImages: [],
+    template: 'minimal',
   });
 
   const nextStep = () => setStep(s => s + 1);
@@ -137,24 +138,40 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-[9px] uppercase tracking-widest text-wedding-accent font-bold">Theme</label>
-                  <div className="flex gap-3 py-1">
-                    {THEMES.map(theme => (
-                      <button
-                        key={theme.key}
-                        type="button"
-                        onClick={() => handleUpdate(prev => ({ ...prev, theme: theme.key }))}
-                        title={theme.label}
-                        className="w-7 h-7 rounded-full transition-all duration-200 hover:scale-110"
-                        style={{
-                          backgroundColor: theme.accent,
-                          boxShadow: (formData.theme ?? 'rose') === theme.key
-                            ? `0 0 0 2px white, 0 0 0 4px ${theme.accent}`
-                            : 'none',
-                          transform: (formData.theme ?? 'rose') === theme.key ? 'scale(1.15)' : undefined,
-                        }}
-                      />
-                    ))}
+                  <label className="text-[9px] uppercase tracking-widest text-wedding-accent font-bold">Template</label>
+                  <div className="grid grid-cols-5 gap-2">
+                    {TEMPLATES.map(tpl => {
+                      const isSelected = (formData.template ?? 'minimal') === tpl.key;
+                      return (
+                        <button
+                          key={tpl.key}
+                          type="button"
+                          onClick={() => handleUpdate(prev => ({ ...prev, template: tpl.key }))}
+                          className="flex flex-col items-center gap-1.5 transition-all duration-200"
+                          style={{ opacity: isSelected ? 1 : 0.6 }}
+                        >
+                          <div
+                            className="w-full aspect-[3/4] rounded-lg overflow-hidden flex flex-col transition-all duration-200"
+                            style={{
+                              background: tpl.mainBg,
+                              boxShadow: isSelected
+                                ? `0 0 0 2px ${tpl.accent}`
+                                : '0 0 0 1px #e5e7eb',
+                            }}
+                          >
+                            <div className="flex-1 flex flex-col items-center justify-center gap-1 px-1">
+                              <div className="w-4 h-[1px]" style={{ background: tpl.accent }} />
+                              <div className="w-5 h-[5px] rounded-full" style={{ background: tpl.primary, opacity: 0.3 }} />
+                              <div className="w-3 h-[3px] rounded-full" style={{ background: tpl.secondary, opacity: 0.3 }} />
+                            </div>
+                            <div className="h-2 w-full" style={{ background: tpl.sectionBg }} />
+                          </div>
+                          <span className="text-[9px] tracking-tight" style={{ color: isSelected ? tpl.accent : '#9CA3AF' }}>
+                            {tpl.name}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
                 

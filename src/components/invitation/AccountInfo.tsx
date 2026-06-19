@@ -40,7 +40,7 @@ const AccountInfo: React.FC<Props> = ({ groom, bride }) => {
   };
 
   return (
-    <section className="py-20 px-6 bg-[#FAF9F7]">
+    <section className="py-20 px-6" style={{ background: 'var(--t-section-bg, #FAF9F7)' }}>
       <h2 className="text-xl tracking-[0.2em] text-wedding-accent text-center mb-12">MAUM</h2>
       <p className="text-center serif text-sm text-wedding-secondary mb-12 leading-relaxed">
         축하의 마음을 담아 보냅니다.<br />
@@ -49,7 +49,7 @@ const AccountInfo: React.FC<Props> = ({ groom, bride }) => {
 
       <div className="space-y-4 max-w-sm mx-auto">
         {/* Groom's side */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        <div className="rounded-lg shadow-sm border border-gray-100 overflow-hidden" style={{ background: 'var(--t-card-bg, #fff)' }}>
           <button 
             onClick={() => setOpenSection(openSection === 'groom' ? null : 'groom')}
             className="w-full px-6 py-4 flex justify-between items-center text-wedding-primary"
@@ -65,7 +65,7 @@ const AccountInfo: React.FC<Props> = ({ groom, bride }) => {
         </div>
 
         {/* Bride's side */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        <div className="rounded-lg shadow-sm border border-gray-100 overflow-hidden" style={{ background: 'var(--t-card-bg, #fff)' }}>
           <button 
             onClick={() => setOpenSection(openSection === 'bride' ? null : 'bride')}
             className="w-full px-6 py-4 flex justify-between items-center text-wedding-primary"
