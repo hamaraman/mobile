@@ -84,16 +84,16 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
     const files = e.target.files;
     if (!files) return;
 
-    const newImages: string[] = [];
     Array.from(files).forEach(file => {
-      const url = URL.createObjectURL(file);
-      newImages.push(url);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const base64 = ev.target?.result as string;
+        if (base64) {
+          handleUpdate(prev => ({ ...prev, galleryImages: [...prev.galleryImages, base64] }));
+        }
+      };
+      reader.readAsDataURL(file);
     });
-
-    handleUpdate(prev => ({
-      ...prev,
-      galleryImages: [...prev.galleryImages, ...newImages]
-    }));
   };
 
   const removeImage = (index: number) => {
@@ -464,17 +464,31 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
                     </div>
                     <p className="text-[8px] text-gray-400 italic">PNG, JPG 파일을 업로드하거나 URL을 추가하세요.</p>
                     
-                    <textarea 
+                    <textarea
                       rows={2}
                       className="w-full bg-[#F9F9F9] border-none p-4 text-[10px] outline-none focus:ring-1 focus:ring-wedding-accent/30 transition-all leading-loose mt-4"
                       placeholder="외부 이미지 URL을 쉼표(,)로 구분하여 직접 입력할 수도 있습니다."
                       value={formData.galleryImages.filter(img => img.startsWith('http')).join(', ')}
                       onChange={e => {
                         const urls = e.target.value.split(',').map(s => s.trim()).filter(s => s !== '');
-                        const localImages = formData.galleryImages.filter(img => img.startsWith('blob:'));
-                        handleUpdate(prev => ({ ...prev, galleryImages: [...localImages, ...urls] }));
+                        const base64Images = formData.galleryImages.filter(img => img.startsWith('data:'));
+                        handleUpdate(prev => ({ ...prev, galleryImages: [...base64Images, ...urls] }));
                       }}
                     />
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-[9px] uppercase tracking-widest text-wedding-accent font-bold">Kakao API Key</label>
+                    <input
+                      type="password"
+                      className="w-full bg-transparent border-b border-gray-200 py-2 text-sm outline-none focus:border-wedding-accent transition-all"
+                      placeholder="JavaScript Key (카카오톡 공유 기능)"
+                      value={formData.kakaoApiKey || ''}
+                      onChange={e => handleUpdate(prev => ({ ...prev, kakaoApiKey: e.target.value }))}
+                    />
+                    <p className="text-[8px] text-gray-400 italic">
+                      developers.kakao.com → 앱 등록 → JavaScript 키. 플랫폼 설정에서 {window.location.origin} 등록 필요.
+                    </p>
                   </div>
 
                 </div>

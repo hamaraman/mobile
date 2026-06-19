@@ -3,6 +3,8 @@ import type { WeddingData } from './types/wedding';
 import InvitationForm from './components/form/InvitationForm';
 import InvitationView from './components/invitation/InvitationView';
 
+const STORAGE_KEY = 'wedding-invitation-data';
+
 const INITIAL_DATA: WeddingData = {
   groom: { name: '이도현', phoneNumber: '010-1234-5678' },
   bride: { name: '김지원', phoneNumber: '010-5678-1234' },
@@ -11,21 +13,41 @@ const INITIAL_DATA: WeddingData = {
   weddingDate: '2026-10-24',
   weddingTime: '12:30',
   location: { name: '아펠가모 반포', address: '서울특별시 서초구 반포동 74-1', lat: 37.5042, lng: 126.9964 },
-  greeting: { 
-    title: '모시는 글', 
-    content: '서로가 마주보며 다진 사랑을 이제 함께\n한 곳을 바라보며 걸어가려 합니다.\n\n저희의 새로운 시작을\n축복해주시면 감사하겠습니다.' 
+  greeting: {
+    title: '모시는 글',
+    content: '서로가 마주보며 다진 사랑을 이제 함께\n한 곳을 바라보며 걸어가려 합니다.\n\n저희의 새로운 시작을\n축복해주시면 감사하겠습니다.',
   },
   galleryImages: [],
   template: 'minimal',
-  // naverClientId: '9zx4u2wpdt',
 };
 
+function loadData(): WeddingData {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? (JSON.parse(saved) as WeddingData) : INITIAL_DATA;
+  } catch {
+    return INITIAL_DATA;
+  }
+}
+
+function saveData(data: WeddingData) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch { /* storage full or unavailable */ }
+}
+
 function App() {
-  const [data, setData] = useState<WeddingData>(INITIAL_DATA);
+  const [data, setData] = useState<WeddingData>(loadData);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+
+  const handleChange = (newData: WeddingData) => {
+    setData(newData);
+    saveData(newData);
+  };
 
   const handleComplete = (newData: WeddingData) => {
     setData(newData);
+    saveData(newData);
     setIsPreviewMode(true);
   };
 
@@ -47,10 +69,10 @@ function App() {
     <div className="flex flex-col lg:flex-row min-h-screen bg-[#FCFAF7]">
       {/* Form Section */}
       <div className="w-full lg:w-1/2 overflow-y-auto max-h-screen border-r border-gray-100">
-        <InvitationForm 
-          initialData={data} 
-          onChange={setData} 
-          onComplete={handleComplete} 
+        <InvitationForm
+          initialData={data}
+          onChange={handleChange}
+          onComplete={handleComplete}
         />
       </div>
 

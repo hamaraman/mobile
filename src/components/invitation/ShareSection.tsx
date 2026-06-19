@@ -54,11 +54,14 @@ const ShareSection: React.FC<Props> = ({ data }) => {
     });
   };
 
-  const shareLink = () => {
-    navigator.share?.({
-      title: `${data.groom.name} & ${data.bride.name} 결혼식에 초대합니다`,
-      url: window.location.href,
-    }).catch(console.error);
+  const shareLink = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      navigator.share({ title: `${data.groom.name} & ${data.bride.name} 결혼식에 초대합니다`, url }).catch(() => {});
+    } else {
+      await navigator.clipboard.writeText(url);
+      alert('링크가 복사되었습니다.');
+    }
   };
 
   return (
