@@ -47,7 +47,7 @@ const InvitationView: React.FC<Props> = ({ data }) => {
         brideParents={data.brideParents}
       />
       <WeddingInfo date={data.weddingDate} time={data.weddingTime} location={data.location} />
-      <MapSection location={data.location} naverClientId={data.naverClientId} />
+      <MapSection location={data.location} />
       <Gallery images={data.galleryImages} />
       <AccountInfo groom={data.groom} bride={data.bride} />
       <ShareSection data={data} />
