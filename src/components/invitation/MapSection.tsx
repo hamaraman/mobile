@@ -179,7 +179,11 @@ const OsmMap: React.FC<{ location: Props['location'] }> = ({ location }) => {
       if (cancelled) return;
       if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
 
-      const map = L.map(containerRef.current, { center: [lat, lng], zoom: approximate ? 13 : 16, zoomControl: true, scrollWheelZoom: false });
+      const container = containerRef.current;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (container as any)._leaflet_id = undefined;
+
+      const map = L.map(container, { center: [lat, lng], zoom: approximate ? 13 : 16, zoomControl: true, scrollWheelZoom: false });
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
@@ -201,7 +205,10 @@ const OsmMap: React.FC<{ location: Props['location'] }> = ({ location }) => {
       setStatus(approximate ? 'approximate' : 'ok');
     };
 
-    if (location.lat && location.lng) { render(location.lat, location.lng); return; }
+    const safeRender = (lat: number, lng: number, approximate = false) =>
+      render(lat, lng, approximate).catch(() => { if (!cancelled) setStatus('error'); });
+
+    if (location.lat && location.lng) { safeRender(location.lat, location.lng); return; }
 
     const queries = [
       location.name ? `${location.name} ${location.address?.split(' ').slice(0,2).join(' ')}` : null,
@@ -214,11 +221,11 @@ const OsmMap: React.FC<{ location: Props['location'] }> = ({ location }) => {
         try {
           const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=kr`);
           const d = await r.json() as { lat: string; lon: string }[];
-          if (d.length > 0 && !cancelled) { render(parseFloat(d[0].lat), parseFloat(d[0].lon), q !== location.name && q !== location.address); return; }
+          if (d.length > 0 && !cancelled) { safeRender(parseFloat(d[0].lat), parseFloat(d[0].lon), q !== location.name && q !== location.address); return; }
         } catch { /* continue */ }
       }
       const fb = krFallback((location.address ?? '') + ' ' + (location.name ?? ''));
-      if (fb && !cancelled) render(fb.lat, fb.lng, true);
+      if (fb && !cancelled) safeRender(fb.lat, fb.lng, true);
       else if (!cancelled) setStatus('error');
     })();
 
