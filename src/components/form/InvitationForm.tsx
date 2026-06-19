@@ -479,13 +479,25 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
 
                   <div className="space-y-3">
                     <label className="text-[9px] uppercase tracking-widest text-wedding-accent font-bold">Kakao Auth Key</label>
-                    <input 
-                      type="password" 
+                    <input
+                      type="password"
                       className="w-full bg-transparent border-b border-gray-200 py-2 text-sm outline-none focus:border-wedding-accent transition-all"
                       placeholder="JavaScript Key"
                       value={formData.kakaoApiKey || ''}
                       onChange={e => handleUpdate(prev => ({ ...prev, kakaoApiKey: e.target.value }))}
                     />
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-[9px] uppercase tracking-widest text-wedding-accent font-bold">Naver Map Client ID</label>
+                    <input
+                      type="text"
+                      className="w-full bg-transparent border-b border-gray-200 py-2 text-sm outline-none focus:border-wedding-accent transition-all"
+                      placeholder="NCP Client ID (입력 시 네이버 지도 사용)"
+                      value={formData.naverClientId || ''}
+                      onChange={e => handleUpdate(prev => ({ ...prev, naverClientId: e.target.value }))}
+                    />
+                    <p className="text-[8px] text-gray-400 italic">네이버 클라우드 플랫폼에서 발급한 Client ID. 미입력 시 OpenStreetMap 사용.</p>
                   </div>
                 </div>
               </section>
