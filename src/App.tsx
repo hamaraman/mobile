@@ -17,6 +17,7 @@ const INITIAL_DATA: WeddingData = {
   },
   galleryImages: [],
   template: 'minimal',
+  naverClientId: '9zx4u2wpdt',
 };
 
 function App() {
