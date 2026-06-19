@@ -97,13 +97,16 @@ const NaverMap: React.FC<{ location: Props['location']; clientId: string; onAuth
     };
 
     const geocodeAndInit = () => {
-      if (!window.naver?.maps?.Service) return;
+      if (!window.naver?.maps) { if (!cancelled) onAuthFail(); return; }
 
-      // If coordinates provided, skip geocoding
+      // If coordinates provided, skip geocoding entirely
       if (location.lat && location.lng) {
         initMap(location.lat, location.lng);
         return;
       }
+
+      // Geocoding requires Service module — if unavailable, auth failed
+      if (!window.naver.maps.Service) { if (!cancelled) onAuthFail(); return; }
 
       window.naver.maps.Service.geocode(
         { query: location.address },
@@ -114,13 +117,12 @@ const NaverMap: React.FC<{ location: Props['location']; clientId: string; onAuth
             const { x, y } = response.v2.addresses[0];
             initMap(parseFloat(y), parseFloat(x));
           } else {
-            // District-level fallback
             const fallback = krFallback(location.address + ' ' + location.name);
             if (fallback) {
               initMap(fallback.lat, fallback.lng);
               if (!cancelled) setStatus('approximate');
             } else {
-              if (!cancelled) setStatus('error');
+              if (!cancelled) onAuthFail();
             }
           }
         }
