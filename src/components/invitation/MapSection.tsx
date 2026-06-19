@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 interface Props {
@@ -87,7 +88,6 @@ const NaverMap: React.FC<{ location: Props['location']; clientId: string; onAuth
 
       if (!cancelled) {
         setStatus('ok');
-        // Detect Naver auth failure overlay injected into the map container
         setTimeout(() => {
           if (!cancelled && containerRef.current?.textContent?.includes('인증이 실패')) {
             onAuthFail();
@@ -99,13 +99,11 @@ const NaverMap: React.FC<{ location: Props['location']; clientId: string; onAuth
     const geocodeAndInit = () => {
       if (!window.naver?.maps) { if (!cancelled) onAuthFail(); return; }
 
-      // If coordinates provided, skip geocoding entirely
       if (location.lat && location.lng) {
         initMap(location.lat, location.lng);
         return;
       }
 
-      // Geocoding requires Service module — if unavailable, auth failed
       if (!window.naver.maps.Service) { if (!cancelled) onAuthFail(); return; }
 
       window.naver.maps.Service.geocode(
@@ -129,7 +127,6 @@ const NaverMap: React.FC<{ location: Props['location']; clientId: string; onAuth
       );
     };
 
-    // Load Naver Maps SDK if not already loaded
     const scriptId = 'naver-maps-sdk';
     if (window.naver?.maps) {
       geocodeAndInit();
@@ -141,12 +138,12 @@ const NaverMap: React.FC<{ location: Props['location']; clientId: string; onAuth
       script.id = scriptId;
       script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${clientId}&submodules=geocoder`;
       script.onload = () => { if (!cancelled) geocodeAndInit(); };
-      script.onerror = () => { if (!cancelled) setStatus('error'); };
+      script.onerror = () => { if (!cancelled) onAuthFail(); };
       document.head.appendChild(script);
     }
 
     return () => { cancelled = true; };
-  }, [location.address, location.lat, location.lng, location.name, clientId]);
+  }, [location.address, location.lat, location.lng, location.name, clientId, onAuthFail]);
 
   return (
     <>
@@ -158,72 +155,80 @@ const NaverMap: React.FC<{ location: Props['location']; clientId: string; onAuth
           ))}
         </div>
       )}
-      {status === 'error' && (
-        <div className="absolute inset-0 bg-gray-50 flex flex-col items-center justify-center gap-2">
-          <p className="serif text-wedding-secondary text-sm">지도를 불러오지 못했습니다.</p>
-          <p className="text-[11px] text-gray-400 px-4 text-center">{location.address}</p>
-        </div>
-      )}
-      {status === 'approximate' && (
-        <div className="absolute bottom-2 inset-x-0 flex justify-center pointer-events-none">
-          <span className="bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full">대략적인 위치입니다</span>
-        </div>
-      )}
     </>
   );
 };
 
-/* ─── OSM Fallback Map ─── */
+/* ─── OSM Map ─── */
 const OsmMap: React.FC<{ location: Props['location'] }> = ({ location }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<import('leaflet').Map | null>(null);
+  const mapRef = useRef<L.Map | null>(null);
   const [status, setStatus] = useState<Status>('loading');
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) { setStatus('error'); return; }
     if (!location.address && !location.lat) { setStatus('idle'); return; }
+
     let cancelled = false;
 
-    const render = async (lat: number, lng: number, approximate = false) => {
-      if (cancelled || !containerRef.current) return;
-      const L = await import('leaflet');
+    const initWithCoords = (lat: number, lng: number, approximate = false) => {
       if (cancelled) return;
-      if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
+      try {
+        if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (container as any)._leaflet_id = undefined;
 
-      const container = containerRef.current;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (container as any)._leaflet_id = undefined;
-
-      const map = L.map(container, { center: [lat, lng], zoom: approximate ? 13 : 16, zoomControl: true, scrollWheelZoom: false });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 19,
-      }).addTo(map);
-
-      if (!approximate) {
-        const accent = getComputedStyle(document.documentElement)
-          .getPropertyValue('--color-wedding-accent').trim() || '#B08E8E';
-        const icon = L.divIcon({
-          html: `<div style="width:20px;height:20px;background:${accent};border:3px solid white;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>`,
-          className: '', iconSize: [20, 20], iconAnchor: [10, 20], popupAnchor: [0, -24],
+        const map = L.map(container, {
+          center: [lat, lng],
+          zoom: approximate ? 13 : 16,
+          zoomControl: true,
+          scrollWheelZoom: false,
         });
-        const marker = L.marker([lat, lng], { icon }).addTo(map);
-        if (location.name) {
-          marker.bindPopup(`<span style="font-size:12px;font-family:'Noto Serif KR',serif">${location.name}</span>`, { closeButton: false }).openPopup();
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          maxZoom: 19,
+        }).addTo(map);
+
+        if (!approximate) {
+          const accent = getComputedStyle(document.documentElement)
+            .getPropertyValue('--color-wedding-accent').trim() || '#B08E8E';
+          const icon = L.divIcon({
+            html: `<div style="width:20px;height:20px;background:${accent};border:3px solid white;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>`,
+            className: '',
+            iconSize: [20, 20],
+            iconAnchor: [10, 20],
+            popupAnchor: [0, -24],
+          });
+          const marker = L.marker([lat, lng], { icon }).addTo(map);
+          if (location.name) {
+            marker.bindPopup(
+              `<span style="font-size:12px;font-family:'Noto Serif KR',serif">${location.name}</span>`,
+              { closeButton: false }
+            ).openPopup();
+          }
         }
+
+        mapRef.current = map;
+        if (!cancelled) setStatus(approximate ? 'approximate' : 'ok');
+      } catch {
+        if (!cancelled) setStatus('error');
       }
-      mapRef.current = map;
-      setStatus(approximate ? 'approximate' : 'ok');
     };
 
-    const safeRender = (lat: number, lng: number, approximate = false) =>
-      render(lat, lng, approximate).catch(() => { if (!cancelled) setStatus('error'); });
-
-    if (location.lat && location.lng) { safeRender(location.lat, location.lng); return; }
+    if (location.lat && location.lng) {
+      initWithCoords(location.lat, location.lng);
+      return () => {
+        cancelled = true;
+        if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
+      };
+    }
 
     const queries = [
-      location.name ? `${location.name} ${location.address?.split(' ').slice(0,2).join(' ')}` : null,
+      location.name ? `${location.name} ${location.address?.split(' ').slice(0, 2).join(' ')}` : null,
       location.address,
-      location.address?.split(' ').slice(0,3).join(' '),
+      location.address?.split(' ').slice(0, 3).join(' '),
     ].filter(Boolean) as string[];
 
     (async () => {
@@ -231,11 +236,14 @@ const OsmMap: React.FC<{ location: Props['location'] }> = ({ location }) => {
         try {
           const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=kr`);
           const d = await r.json() as { lat: string; lon: string }[];
-          if (d.length > 0 && !cancelled) { safeRender(parseFloat(d[0].lat), parseFloat(d[0].lon), q !== location.name && q !== location.address); return; }
+          if (d.length > 0 && !cancelled) {
+            initWithCoords(parseFloat(d[0].lat), parseFloat(d[0].lon), q !== location.address);
+            return;
+          }
         } catch { /* continue */ }
       }
       const fb = krFallback((location.address ?? '') + ' ' + (location.name ?? ''));
-      if (fb && !cancelled) safeRender(fb.lat, fb.lng, true);
+      if (fb && !cancelled) initWithCoords(fb.lat, fb.lng, true);
       else if (!cancelled) setStatus('error');
     })();
 
@@ -250,7 +258,9 @@ const OsmMap: React.FC<{ location: Props['location'] }> = ({ location }) => {
       <div ref={containerRef} className="w-full h-full" />
       {status === 'loading' && (
         <div className="absolute inset-0 bg-gray-50 flex items-center justify-center gap-1.5">
-          {[0,150,300].map(d => <div key={d} className="w-1.5 h-1.5 bg-wedding-accent rounded-full animate-bounce" style={{ animationDelay:`${d}ms` }} />)}
+          {[0, 150, 300].map(d => (
+            <div key={d} className="w-1.5 h-1.5 bg-wedding-accent rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />
+          ))}
         </div>
       )}
       {status === 'error' && (
