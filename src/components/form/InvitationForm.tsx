@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { WeddingData, Person } from '../../types/wedding';
+import { THEMES } from '../../utils/themes';
 
 interface Props {
   onComplete: (data: WeddingData) => void;
@@ -133,6 +134,28 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
                 <div className="space-y-2">
                   <h2 className="text-2xl font-serif italic text-wedding-primary/80">The Couple</h2>
                   <p className="text-xs text-wedding-secondary/70 serif">기록의 시작, 두 분의 이름을 남겨주세요.</p>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[9px] uppercase tracking-widest text-wedding-accent font-bold">Theme</label>
+                  <div className="flex gap-3 py-1">
+                    {THEMES.map(theme => (
+                      <button
+                        key={theme.key}
+                        type="button"
+                        onClick={() => handleUpdate(prev => ({ ...prev, theme: theme.key }))}
+                        title={theme.label}
+                        className="w-7 h-7 rounded-full transition-all duration-200 hover:scale-110"
+                        style={{
+                          backgroundColor: theme.accent,
+                          boxShadow: (formData.theme ?? 'rose') === theme.key
+                            ? `0 0 0 2px white, 0 0 0 4px ${theme.accent}`
+                            : 'none',
+                          transform: (formData.theme ?? 'rose') === theme.key ? 'scale(1.15)' : undefined,
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
                 
                 <div className="space-y-12">

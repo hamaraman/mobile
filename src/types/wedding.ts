@@ -1,3 +1,5 @@
+export type ThemeKey = 'rose' | 'blush' | 'sage' | 'navy' | 'gold';
+
 export type Person = {
   name: string;
   phoneNumber: string;
@@ -34,4 +36,5 @@ export type WeddingData = {
   };
   galleryImages: string[];
   kakaoApiKey?: string;
+  theme?: ThemeKey;
 }

@@ -16,6 +16,7 @@ const INITIAL_DATA: WeddingData = {
     content: '서로가 마주보며 다진 사랑을 이제 함께\n한 곳을 바라보며 걸어가려 합니다.\n\n저희의 새로운 시작을\n축복해주시면 감사하겠습니다.' 
   },
   galleryImages: [],
+  theme: 'rose',
 };
 
 function App() {
