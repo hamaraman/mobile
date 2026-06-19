@@ -10,14 +10,14 @@ const INITIAL_DATA: WeddingData = {
   brideParents: { father: { name: '김철수', phoneNumber: '' }, mother: { name: '이영희', phoneNumber: '' } },
   weddingDate: '2026-10-24',
   weddingTime: '12:30',
-  location: { name: '아펠가모 반포', address: '서울특별시 서초구 반포동 74-1' },
+  location: { name: '아펠가모 반포', address: '서울특별시 서초구 반포동 74-1', lat: 37.5042, lng: 126.9964 },
   greeting: { 
     title: '모시는 글', 
     content: '서로가 마주보며 다진 사랑을 이제 함께\n한 곳을 바라보며 걸어가려 합니다.\n\n저희의 새로운 시작을\n축복해주시면 감사하겠습니다.' 
   },
   galleryImages: [],
   template: 'minimal',
-  naverClientId: '9zx4u2wpdt',
+  // naverClientId: '9zx4u2wpdt',
 };
 
 function App() {
