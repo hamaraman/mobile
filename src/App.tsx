@@ -21,7 +21,6 @@ const INITIAL_DATA: WeddingData = {
   },
   galleryImages: [],
   template: 'minimal',
-  kakaoApiKey: '35a6b3e9d3e47ea098f206c51459dbd9',
 };
 
 function loadData(): WeddingData {

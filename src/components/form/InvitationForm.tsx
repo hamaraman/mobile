@@ -488,20 +488,6 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
                     />
                   </div>
 
-                  <div className="space-y-3">
-                    <label className="text-[9px] uppercase tracking-widest text-wedding-accent font-bold">Kakao API Key</label>
-                    <input
-                      type="password"
-                      className="w-full bg-transparent border-b border-gray-200 py-2 text-sm outline-none focus:border-wedding-accent transition-all"
-                      placeholder="JavaScript Key (카카오톡 공유 기능)"
-                      value={formData.kakaoApiKey || ''}
-                      onChange={e => handleUpdate(prev => ({ ...prev, kakaoApiKey: e.target.value }))}
-                    />
-                    <p className="text-[8px] text-gray-400 italic">
-                      developers.kakao.com → 앱 등록 → JavaScript 키. 플랫폼 설정에서 {window.location.origin} 등록 필요.
-                    </p>
-                  </div>
-
                 </div>
               </section>
 

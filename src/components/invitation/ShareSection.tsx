@@ -14,14 +14,17 @@ declare global {
   }
 }
 
+// 카카오 JavaScript 키. 빌드 시 .env의 VITE_KAKAO_KEY로 주입됨.
+const KAKAO_KEY = import.meta.env.VITE_KAKAO_KEY;
+
 const ShareSection: React.FC<Props> = ({ data }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (window.Kakao && !window.Kakao.isInitialized() && data.kakaoApiKey) {
-      window.Kakao.init(data.kakaoApiKey);
+    if (window.Kakao && !window.Kakao.isInitialized() && KAKAO_KEY) {
+      window.Kakao.init(KAKAO_KEY);
     }
-  }, [data.kakaoApiKey]);
+  }, []);
 
   const shareKakao = () => {
     if (!window.Kakao) {

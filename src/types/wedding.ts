@@ -37,6 +37,5 @@ export type WeddingData = {
     content: string;
   };
   galleryImages: string[];
-  kakaoApiKey?: string;
   template?: TemplateKey;
 }
