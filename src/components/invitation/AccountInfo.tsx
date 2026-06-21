@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Person } from '../../types/wedding';
 import { copyToClipboard } from '../../utils/clipboard';
+import { useToast } from '../../hooks/toastContext';
 import { ChevronDown, ChevronUp, Copy } from 'lucide-react';
 
 interface Props {
@@ -19,9 +20,10 @@ const AccountItem = ({ person, label, onCopy }: { person: Person, label: string,
         <p className="text-wedding-secondary">{person.bankInfo?.bankName || '신한은행'}</p>
         <p className="font-mono">{person.bankInfo?.accountNumber || '110-123-456789'}</p>
       </div>
-      <button 
+      <button
         onClick={() => onCopy(person.bankInfo?.accountNumber || '110-123-456789')}
         className="p-2 text-wedding-accent hover:bg-wedding-accent/10 rounded-full transition-colors"
+        aria-label={`${person.name} 계좌번호 복사`}
       >
         <Copy className="w-4 h-4" />
       </button>
@@ -30,12 +32,15 @@ const AccountItem = ({ person, label, onCopy }: { person: Person, label: string,
 );
 
 const AccountInfo: React.FC<Props> = ({ groom, bride }) => {
+  const { toast } = useToast();
   const [openSection, setOpenSection] = useState<'groom' | 'bride' | null>(null);
 
   const handleCopy = async (text: string) => {
     const success = await copyToClipboard(text);
     if (success) {
-      alert('계좌번호가 복사되었습니다.');
+      toast('계좌번호가 복사되었습니다.');
+    } else {
+      toast('복사에 실패했습니다.', 'error');
     }
   };
 

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import type { WeddingData } from './types/wedding';
 import InvitationForm from './components/form/InvitationForm';
 import InvitationView from './components/invitation/InvitationView';
+import { ToastProvider } from './hooks/useToast';
+import { useToast } from './hooks/toastContext';
 
 const STORAGE_KEY = 'wedding-invitation-data';
 
@@ -31,24 +33,35 @@ function loadData(): WeddingData {
   }
 }
 
-function saveData(data: WeddingData) {
+function saveData(data: WeddingData): boolean {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch { /* storage full or unavailable */ }
+    return true;
+  } catch (err) {
+    console.warn('Failed to persist wedding data:', err);
+    return false;
+  }
 }
 
 function App() {
   const [data, setData] = useState<WeddingData>(loadData);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const { toast } = useToast();
+
+  const persist = (newData: WeddingData) => {
+    if (!saveData(newData)) {
+      toast('이미지 용량이 커서 자동 저장에 실패했습니다.', 'error');
+    }
+  };
 
   const handleChange = (newData: WeddingData) => {
     setData(newData);
-    saveData(newData);
+    persist(newData);
   };
 
   const handleComplete = (newData: WeddingData) => {
     setData(newData);
-    saveData(newData);
+    persist(newData);
     setIsPreviewMode(true);
   };
 
@@ -100,4 +113,10 @@ function App() {
   );
 }
 
-export default App;
+export default function AppWithProviders() {
+  return (
+    <ToastProvider>
+      <App />
+    </ToastProvider>
+  );
+}

@@ -38,6 +38,5 @@ export type WeddingData = {
   };
   galleryImages: string[];
   kakaoApiKey?: string;
-  naverClientId?: string;
   template?: TemplateKey;
 }

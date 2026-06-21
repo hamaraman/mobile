@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import type { WeddingData, Person } from '../../types/wedding';
 import { TEMPLATES } from '../../utils/templates';
+import { resizeImage } from '../../utils/image';
+import { useToast } from '../../hooks/toastContext';
 
 interface Props {
   onComplete: (data: WeddingData) => void;
@@ -9,6 +11,7 @@ interface Props {
 }
 
 const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) => {
+  const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<WeddingData>(initialData || {
     groom: { name: '', phoneNumber: '' },
@@ -80,20 +83,28 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
     });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    Array.from(files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const base64 = ev.target?.result as string;
-        if (base64) {
-          handleUpdate(prev => ({ ...prev, galleryImages: [...prev.galleryImages, base64] }));
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    const selected = Array.from(files);
+    e.target.value = ''; // allow re-selecting the same file later
+
+    let failed = 0;
+    for (const file of selected) {
+      try {
+        const base64 = await resizeImage(file);
+        handleUpdate(prev => ({ ...prev, galleryImages: [...prev.galleryImages, base64] }));
+      } catch {
+        failed += 1;
+      }
+    }
+
+    if (failed > 0) {
+      toast(`${failed}장의 이미지를 불러오지 못했습니다.`, 'error');
+    } else if (selected.length > 0) {
+      toast(`${selected.length}장의 사진을 추가했습니다.`);
+    }
   };
 
   const removeImage = (index: number) => {

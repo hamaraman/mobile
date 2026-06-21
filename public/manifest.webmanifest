@@ -1,0 +1,22 @@
+{
+  "name": "모바일 청첩장",
+  "short_name": "청첩장",
+  "description": "두 사람의 결혼식에 초대합니다.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FCFAF7",
+  "theme_color": "#B08E8E",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/og-image.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

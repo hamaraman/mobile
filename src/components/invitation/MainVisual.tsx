@@ -99,9 +99,34 @@ const MainVisual: React.FC<Props> = ({ data }) => {
         )}
       </motion.div>
 
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-wedding-accent/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-wedding-accent/10 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <motion.div
+          className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-wedding-accent/5 rounded-full blur-3xl"
+          animate={{ x: [0, 20, 0], y: [0, 18, 0] }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-wedding-accent/10 rounded-full blur-3xl"
+          animate={{ x: [0, -24, 0], y: [0, -16, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {/* Slowly drifting petals */}
+        {[
+          { left: '12%', size: 6, dur: 11, delay: 0 },
+          { left: '32%', size: 4, dur: 14, delay: 2.5 },
+          { left: '58%', size: 5, dur: 12, delay: 1.2 },
+          { left: '78%', size: 4, dur: 16, delay: 3.4 },
+          { left: '88%', size: 6, dur: 13, delay: 0.8 },
+        ].map((p, i) => (
+          <motion.span
+            key={i}
+            className="absolute top-[-8%] rounded-full bg-wedding-accent/30"
+            style={{ left: p.left, width: p.size, height: p.size }}
+            animate={{ y: ['0vh', '90vh'], x: [0, 14, -8, 0], opacity: [0, 0.8, 0.8, 0] }}
+            transition={{ duration: p.dur, repeat: Infinity, ease: 'linear', delay: p.delay }}
+          />
+        ))}
       </div>
     </section>
   );
