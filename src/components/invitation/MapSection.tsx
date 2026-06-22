@@ -5,11 +5,14 @@ interface Props {
 }
 
 const MapSection: React.FC<Props> = ({ location }) => {
-  const query = location.lat && location.lng
+  // 좌표가 있으면 좌표로, 없으면 주소로 검색한다. 장소명+주소를 한 문자열로 합치면
+  // 구글 지오코더가 엉뚱한 곳을 잡거나 못 찾는 경우가 많아, 가장 정확한 주소를
+  // 우선 쓰고 주소가 비어 있을 때만 장소명으로 폴백한다.
+  const query = location.lat != null && location.lng != null
     ? `${location.lat},${location.lng}`
-    : encodeURIComponent(`${location.name} ${location.address}`);
+    : location.address || location.name;
 
-  const src = `https://maps.google.com/maps?q=${query}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+  const src = `https://www.google.com/maps?q=${encodeURIComponent(query)}&z=16&hl=ko&output=embed`;
 
   const openKakao = () =>
     window.open(`https://map.kakao.com/link/search/${encodeURIComponent(location.name || location.address)}`, '_blank');
