@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Cloudflare Wrangler local dev state
+.wrangler
+
 # Local env (키 값은 커밋하지 않음; .env.example 참고)
 .env
 .env.*

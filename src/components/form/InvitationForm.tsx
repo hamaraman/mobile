@@ -8,9 +8,10 @@ interface Props {
   onComplete: (data: WeddingData) => void;
   onChange?: (data: WeddingData) => void;
   initialData?: WeddingData;
+  isSubmitting?: boolean;
 }
 
-const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) => {
+const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData, isSubmitting }) => {
   const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<WeddingData>(initialData || {
@@ -493,7 +494,7 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
 
               <div className="flex gap-4 pt-8">
                 <button type="button" onClick={prevStep} className="w-24 text-[10px] uppercase tracking-widest text-gray-400 hover:text-wedding-primary transition-all">Back</button>
-                <button type="submit" className="flex-1 bg-wedding-accent text-white py-5 text-sm tracking-[0.3em] uppercase font-bold hover:brightness-110 transition-all shadow-xl shadow-wedding-accent/20">Create Invitation</button>
+                <button type="submit" disabled={isSubmitting} className="flex-1 bg-wedding-accent text-white py-5 text-sm tracking-[0.2em] font-bold hover:brightness-110 transition-all shadow-xl shadow-wedding-accent/20 disabled:opacity-60 disabled:cursor-not-allowed">{isSubmitting ? '발행 중…' : '청첩장 발행하기'}</button>
               </div>
             </div>
           )}
