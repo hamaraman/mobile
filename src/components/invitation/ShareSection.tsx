@@ -1,115 +1,52 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import type { WeddingData } from '../../types/wedding';
-import { Share2, MessageCircle } from 'lucide-react';
+import { Link as LinkIcon } from 'lucide-react';
 import { useToast } from '../../hooks/toastContext';
 
 interface Props {
   data: WeddingData;
 }
 
-declare global {
-  interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Kakao: any;
-  }
-}
-
-// 카카오 JavaScript 키. 빌드 시 .env의 VITE_KAKAO_KEY로 주입되며,
-// 미설정 시 기본 공개 키를 사용한다. 이 키는 클라이언트 번들에 노출되는 공개 JS 키라 비밀이 아니다.
-const KAKAO_KEY = import.meta.env.VITE_KAKAO_KEY || '35a6b3e9d3e47ea098f206c51459dbd9';
-
 const ShareSection: React.FC<Props> = ({ data }) => {
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (window.Kakao && !window.Kakao.isInitialized() && KAKAO_KEY) {
-      window.Kakao.init(KAKAO_KEY);
-    }
-  }, []);
+  // 발행된 청첩장(?id=xxx)일 때만 공유 링크가 의미가 있다. 편집기 미리보기에서는
+  // 아직 링크가 없으므로 안내 문구만 보여준다.
+  const id = new URLSearchParams(window.location.search).get('id');
+  const shareUrl = id ? window.location.href : null;
 
-  const shareKakao = () => {
-    if (!window.Kakao) {
-      toast('카카오톡 공유 기능을 불러올 수 없습니다.', 'error');
-      return;
-    }
-
-    if (!window.Kakao.isInitialized()) {
-      toast('카카오 API 키가 설정되지 않았습니다.', 'error');
-      return;
-    }
-
-    // Kakao scrapes the image URL server-side, so base64 data URLs won't work.
-    // On a published page (?id=xxx) the backend can serve the gallery photo as a
-    // real image, so point Kakao at that endpoint; otherwise fall back to an
-    // external gallery URL or the hosted OG image.
-    const publishedId = new URLSearchParams(window.location.search).get('id');
-    const externalImage = data.galleryImages.find(img => img.startsWith('http'));
-    const imageUrl =
-      publishedId && data.galleryImages.length > 0
-        ? `${window.location.origin}/api/invitations/${encodeURIComponent(publishedId)}/og`
-        : externalImage || `${window.location.origin}/og-image.png`;
-
-    const d = data.weddingDate ? new Date(data.weddingDate) : null;
-    const dateText = d && !isNaN(d.getTime())
-      ? d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })
-      : data.weddingDate;
-    const description = [dateText, data.weddingTime, data.location.name].filter(Boolean).join(' · ');
-
+  const copy = async () => {
+    if (!shareUrl) return;
     try {
-      window.Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: `${data.groom.name} & ${data.bride.name} 결혼합니다`,
-          description,
-          imageUrl,
-          link: {
-            mobileWebUrl: window.location.href,
-            webUrl: window.location.href,
-          },
-        },
-        buttons: [
-          {
-            title: '청첩장 보기',
-            link: {
-              mobileWebUrl: window.location.href,
-              webUrl: window.location.href,
-            },
-          },
-        ],
-      });
-    } catch (e) {
-      console.error('Kakao share error:', e);
-      toast('카카오톡 공유 중 오류가 발생했습니다.', 'error');
-    }
-  };
-
-  const shareLink = async () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      navigator.share({ title: `${data.groom.name} & ${data.bride.name} 결혼식에 초대합니다`, url }).catch(() => {});
-    } else {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(shareUrl);
       toast('링크가 복사되었습니다.');
+    } catch {
+      toast('복사에 실패했습니다.', 'error');
     }
   };
 
   return (
     <section className="py-12 px-6 bg-white flex flex-col items-center gap-6">
-      <button 
-        onClick={shareKakao}
-        className="w-full max-w-xs flex items-center justify-center gap-2 bg-[#FEE500] text-[#3c1e1e] py-4 rounded-md font-medium shadow-sm hover:brightness-95 transition-all"
-      >
-        <MessageCircle className="w-5 h-5 fill-current" />
-        카카오톡 공유하기
-      </button>
-      
-      <button 
-        onClick={shareLink}
-        className="w-full max-w-xs flex items-center justify-center gap-2 bg-gray-100 text-gray-700 py-4 rounded-md font-medium hover:bg-gray-200 transition-all"
-      >
-        <Share2 className="w-5 h-5" />
-        링크 복사하기
-      </button>
+      {shareUrl ? (
+        <div className="w-full max-w-xs space-y-3 text-center">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-wedding-accent font-bold">Share</p>
+          <p className="text-sm text-gray-500">이 청첩장을 소중한 분들께 전해보세요.</p>
+          <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5">
+            <LinkIcon className="w-4 h-4 text-gray-400 shrink-0" />
+            <input
+              readOnly
+              value={shareUrl}
+              onFocus={e => e.currentTarget.select()}
+              className="flex-1 bg-transparent text-xs outline-none text-gray-600 truncate"
+            />
+            <button onClick={copy} className="text-xs font-bold text-wedding-accent whitespace-nowrap">
+              복사
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="text-xs text-gray-400 text-center">발행하면 이 자리에 공유 링크가 표시됩니다.</p>
+      )}
 
       <p className="text-xs text-gray-400 mt-4">
         Copyright © {new Date().getFullYear()} {data.groom.name} & {data.bride.name}. All rights reserved.
