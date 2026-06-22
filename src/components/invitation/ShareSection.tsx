@@ -48,27 +48,32 @@ const ShareSection: React.FC<Props> = ({ data }) => {
       : data.weddingDate;
     const description = [dateText, data.weddingTime, data.location.name].filter(Boolean).join(' · ');
 
-    window.Kakao.Link.sendDefault({
-      objectType: 'feed',
-      content: {
-        title: `${data.groom.name} & ${data.bride.name} 결혼합니다`,
-        description,
-        imageUrl,
-        link: {
-          mobileWebUrl: window.location.href,
-          webUrl: window.location.href,
-        },
-      },
-      buttons: [
-        {
-          title: '청첩장 보기',
+    try {
+      window.Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: `${data.groom.name} & ${data.bride.name} 결혼합니다`,
+          description,
+          imageUrl,
           link: {
             mobileWebUrl: window.location.href,
             webUrl: window.location.href,
           },
         },
-      ],
-    });
+        buttons: [
+          {
+            title: '청첩장 보기',
+            link: {
+              mobileWebUrl: window.location.href,
+              webUrl: window.location.href,
+            },
+          },
+        ],
+      });
+    } catch (e) {
+      console.error('Kakao share error:', e);
+      toast('카카오톡 공유 중 오류가 발생했습니다.', 'error');
+    }
   };
 
   const shareLink = async () => {
