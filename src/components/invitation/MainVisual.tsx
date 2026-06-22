@@ -59,7 +59,7 @@ const MainVisual: React.FC<Props> = ({ data }) => {
         className="text-center z-10 space-y-4"
       >
         <p className="tracking-[0.3em] text-sm text-wedding-secondary mb-2">WEDDING DAY</p>
-        <h1 className="flex items-center justify-center gap-2 whitespace-nowrap text-3xl sm:text-4xl md:text-5xl font-serif text-wedding-primary">
+        <h1 className="flex items-center justify-center gap-2 whitespace-nowrap text-3xl sm:text-4xl font-serif text-wedding-primary">
           <span>{data.groom.name}</span>
           <span className="text-2xl">&</span>
           <span>{data.bride.name}</span>
