@@ -33,12 +33,13 @@ export async function onRequest(context) {
   const raw = await env.INVITATIONS.get(id);
   if (!raw) return response;
 
-  let data;
+  let record;
   try {
-    data = JSON.parse(raw).data;
+    record = JSON.parse(raw);
   } catch {
     return response;
   }
+  const data = record?.data;
   if (!data) return response;
 
   const groom = data.groom?.name || '';
@@ -54,11 +55,12 @@ export async function onRequest(context) {
     [dateText, data.weddingTime, data.location?.name].filter(Boolean).join(' · ') ||
     '소중한 분들을 결혼식에 모십니다.';
 
-  // 갤러리 사진을 실제 이미지로 내보내는 엔드포인트(절대 URL). 캐시 무력화를 위해
-  // 업데이트 시각을 쿼리로 붙인다.
+  // 갤러리 사진을 실제 이미지로 내보내는 엔드포인트(절대 URL). 사진을 교체하면
+  // updatedAt이 바뀌므로 ?v=updatedAt을 붙여 메신저/CDN 캐시를 무력화한다.
   const hasImage = Array.isArray(data.galleryImages) && data.galleryImages.length > 0;
+  const version = record.updatedAt || record.createdAt || '';
   const imageUrl = hasImage
-    ? `${url.origin}/api/invitations/${encodeURIComponent(id)}/og`
+    ? `${url.origin}/api/invitations/${encodeURIComponent(id)}/og?v=${version}`
     : `${url.origin}/og-image.png`;
 
   return new HTMLRewriter()
