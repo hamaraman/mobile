@@ -78,7 +78,11 @@ function App() {
     try {
       const { id, editToken } = await publishInvitation(newData);
       try { localStorage.setItem(`edit-token-${id}`, editToken); } catch { /* ignore */ }
+      // 발행 후 곧장 완성된 청첩장을 보여준다. URL을 공유 링크(?id=xxx)로 바꾸면
+      // 청첩장 맨 하단 공유 영역에 그 링크가 표시되고, 새로고침해도 그대로 열린다.
+      window.history.pushState({}, '', `${window.location.origin}/?id=${id}`);
       setPublishedId(id);
+      toast('청첩장이 발행되었습니다. 맨 아래에서 공유 링크를 확인하세요. 🎉');
     } catch (e) {
       toast(e instanceof Error ? e.message : '저장에 실패했습니다.', 'error');
     } finally {
@@ -86,29 +90,9 @@ function App() {
     }
   };
 
-  // 3) 발행 완료 → 공유 링크 안내 화면
+  // 3) 발행 완료 → 완성된 청첩장 표시 (공유 링크는 맨 하단 ShareSection에 노출)
   if (publishedId) {
-    const shareUrl = `${window.location.origin}/?id=${publishedId}`;
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FCFAF7] px-6 text-center gap-6">
-        <div className="space-y-2">
-          <span className="text-[10px] tracking-[0.4em] text-wedding-accent font-bold uppercase">Published</span>
-          <h1 className="text-2xl font-serif text-wedding-primary">청첩장이 발행되었습니다 🎉</h1>
-          <p className="text-sm text-gray-500">아래 링크를 공유하면 누구나, 어떤 기기에서든 볼 수 있어요.</p>
-        </div>
-        <div className="w-full max-w-md flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-4 py-3">
-          <input readOnly value={shareUrl} className="flex-1 bg-transparent text-sm outline-none text-gray-700" />
-          <button
-            onClick={async () => { await navigator.clipboard.writeText(shareUrl); toast('링크가 복사되었습니다.'); }}
-            className="text-xs font-bold text-wedding-accent whitespace-nowrap"
-          >복사</button>
-        </div>
-        <div className="flex gap-3">
-          <a href={shareUrl} className="bg-wedding-primary text-white px-6 py-3 rounded-md text-sm font-medium">청첩장 보기</a>
-          <button onClick={() => setPublishedId(null)} className="px-6 py-3 rounded-md text-sm text-gray-500 border border-gray-200">계속 수정</button>
-        </div>
-      </div>
-    );
+    return <InvitationView data={data} />;
   }
 
   // 4) 편집기 (생성/수정)
