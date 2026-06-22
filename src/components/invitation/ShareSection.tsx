@@ -38,10 +38,16 @@ const ShareSection: React.FC<Props> = ({ data }) => {
       return;
     }
 
-    // Kakao scrapes the image URL server-side, so base64 data URLs won't work —
-    // prefer an external gallery URL, otherwise fall back to the hosted OG image.
+    // Kakao scrapes the image URL server-side, so base64 data URLs won't work.
+    // On a published page (?id=xxx) the backend can serve the gallery photo as a
+    // real image, so point Kakao at that endpoint; otherwise fall back to an
+    // external gallery URL or the hosted OG image.
+    const publishedId = new URLSearchParams(window.location.search).get('id');
     const externalImage = data.galleryImages.find(img => img.startsWith('http'));
-    const imageUrl = externalImage || `${window.location.origin}/og-image.png`;
+    const imageUrl =
+      publishedId && data.galleryImages.length > 0
+        ? `${window.location.origin}/api/invitations/${encodeURIComponent(publishedId)}/og`
+        : externalImage || `${window.location.origin}/og-image.png`;
 
     const d = data.weddingDate ? new Date(data.weddingDate) : null;
     const dateText = d && !isNaN(d.getTime())
