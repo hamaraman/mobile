@@ -14,8 +14,9 @@ declare global {
   }
 }
 
-// 카카오 JavaScript 키. 빌드 시 .env의 VITE_KAKAO_KEY로 주입됨.
-const KAKAO_KEY = import.meta.env.VITE_KAKAO_KEY;
+// 카카오 JavaScript 키. 빌드 시 .env의 VITE_KAKAO_KEY로 주입되며,
+// 미설정 시 기본 공개 키를 사용한다. 이 키는 클라이언트 번들에 노출되는 공개 JS 키라 비밀이 아니다.
+const KAKAO_KEY = import.meta.env.VITE_KAKAO_KEY || '35a6b3e9d3e47ea098f206c51459dbd9';
 
 const ShareSection: React.FC<Props> = ({ data }) => {
   const { toast } = useToast();
