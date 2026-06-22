@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { WeddingData, Person } from '../../types/wedding';
 import { TEMPLATES } from '../../utils/templates';
 import { resizeImage } from '../../utils/image';
+import { openAddressSearch, geocodeAddress } from '../../utils/geocode';
 import { useToast } from '../../hooks/toastContext';
 
 interface Props {
@@ -41,6 +42,26 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData, is
       onChange?.(next);
       return next;
     });
+  };
+
+  // 주소 검색(다음 우편번호) → 선택한 주소를 저장하고 좌표까지 변환해 함께 보관한다.
+  // 좌표가 있으면 지도가 정확한 위치를 가리킨다.
+  const handleAddressSearch = async () => {
+    const picked = await openAddressSearch();
+    if (!picked) return;
+    handleUpdate(prev => ({
+      ...prev,
+      location: { ...prev.location, address: picked.address, lat: undefined, lng: undefined },
+    }));
+    const coords = await geocodeAddress(picked.address);
+    if (coords) {
+      handleUpdate(prev => ({
+        ...prev,
+        location: { ...prev.location, lat: coords.lat, lng: coords.lng },
+      }));
+    } else {
+      toast('주소는 저장됐지만 지도 좌표를 찾지 못했어요. 지도가 정확하지 않을 수 있습니다.', 'error');
+    }
   };
 
   const updatePerson = (target: 'groom' | 'bride' | 'groomParents.father' | 'groomParents.mother' | 'brideParents.father' | 'brideParents.mother', field: keyof Person, value: string) => {
@@ -331,14 +352,24 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData, is
 
                   <div className="space-y-1">
                     <label className="text-[9px] uppercase tracking-widest text-wedding-accent font-bold">Address</label>
-                    <input 
-                      type="text" 
-                      className="w-full bg-transparent border-b border-gray-200 py-2 text-sm outline-none focus:border-wedding-accent transition-all"
-                      placeholder="도로명 주소"
-                      value={formData.location.address}
-                      onChange={e => handleUpdate(prev => ({ ...prev, location: { ...prev.location, address: e.target.value } }))}
-                      required
-                    />
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        className="flex-1 bg-transparent border-b border-gray-200 py-2 text-sm outline-none focus:border-wedding-accent transition-all"
+                        placeholder="주소 검색을 눌러 선택하세요"
+                        value={formData.location.address}
+                        onChange={e => handleUpdate(prev => ({ ...prev, location: { ...prev.location, address: e.target.value, lat: undefined, lng: undefined } }))}
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddressSearch}
+                        className="shrink-0 px-3 py-2 text-[10px] uppercase tracking-widest border border-gray-200 rounded text-wedding-primary hover:bg-gray-50 transition-all"
+                      >주소 검색</button>
+                    </div>
+                    {formData.location.lat != null && formData.location.lng != null && (
+                      <p className="text-[10px] text-green-600">✓ 지도 위치 확인됨</p>
+                    )}
                   </div>
                 </div>
               </section>
