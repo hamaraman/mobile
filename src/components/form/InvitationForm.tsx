@@ -300,7 +300,7 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
                         type="date" 
                         className="w-full bg-transparent border-b border-gray-200 py-2 text-sm outline-none focus:border-wedding-accent transition-all"
                         value={formData.weddingDate}
-                        onChange={e => setFormData({ ...formData, weddingDate: e.target.value })}
+                        onChange={e => handleUpdate(prev => ({ ...prev, weddingDate: e.target.value }))}
                         required
                       />
                     </div>
@@ -310,7 +310,7 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
                         type="time" 
                         className="w-full bg-transparent border-b border-gray-200 py-2 text-sm outline-none focus:border-wedding-accent transition-all"
                         value={formData.weddingTime}
-                        onChange={e => setFormData({ ...formData, weddingTime: e.target.value })}
+                        onChange={e => handleUpdate(prev => ({ ...prev, weddingTime: e.target.value }))}
                         required
                       />
                     </div>
@@ -323,7 +323,7 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
                       className="w-full bg-transparent border-b border-gray-200 py-2 text-sm outline-none focus:border-wedding-accent transition-all"
                       placeholder="예식장 이름을 입력하세요"
                       value={formData.location.name}
-                      onChange={e => setFormData({ ...formData, location: { ...formData.location, name: e.target.value } })}
+                      onChange={e => handleUpdate(prev => ({ ...prev, location: { ...prev.location, name: e.target.value } }))}
                       required
                     />
                   </div>
@@ -335,7 +335,7 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
                       className="w-full bg-transparent border-b border-gray-200 py-2 text-sm outline-none focus:border-wedding-accent transition-all"
                       placeholder="도로명 주소"
                       value={formData.location.address}
-                      onChange={e => setFormData({ ...formData, location: { ...formData.location, address: e.target.value } })}
+                      onChange={e => handleUpdate(prev => ({ ...prev, location: { ...prev.location, address: e.target.value } }))}
                       required
                     />
                   </div>
@@ -363,14 +363,14 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData }) 
                     className="w-full bg-transparent border-b border-gray-200 py-2 text-lg outline-none focus:border-wedding-accent transition-all font-serif italic"
                     placeholder="제목 (예: 모시는 글)"
                     value={formData.greeting.title}
-                    onChange={e => setFormData({ ...formData, greeting: { ...formData.greeting, title: e.target.value } })}
+                    onChange={e => handleUpdate(prev => ({ ...prev, greeting: { ...prev.greeting, title: e.target.value } }))}
                   />
                   <textarea 
                     rows={10}
                     className="w-full bg-white/40 backdrop-blur-sm border border-gray-100 p-6 text-sm outline-none focus:border-wedding-accent transition-all font-serif leading-loose resize-none shadow-sm"
                     placeholder="두 사람이 하나가 되는 소중한 날..."
                     value={formData.greeting.content}
-                    onChange={e => setFormData({ ...formData, greeting: { ...formData.greeting, content: e.target.value } })}
+                    onChange={e => handleUpdate(prev => ({ ...prev, greeting: { ...prev.greeting, content: e.target.value } }))}
                   />
                 </div>
               </section>

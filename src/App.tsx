@@ -42,10 +42,18 @@ function saveData(data: WeddingData): boolean {
   }
 }
 
+// 편집기는 ?edit 주소로만 접근. 그 외(공유 링크)는 청첩장을 바로 보여준다.
+const IS_EDITOR = new URLSearchParams(window.location.search).has('edit');
+
 function App() {
   const [data, setData] = useState<WeddingData>(loadData);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const { toast } = useToast();
+
+  // 공유 링크로 들어온 방문자: 편집기 없이 청첩장만 보여준다.
+  if (!IS_EDITOR) {
+    return <InvitationView data={data} />;
+  }
 
   const persist = (newData: WeddingData) => {
     if (!saveData(newData)) {
