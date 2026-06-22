@@ -55,8 +55,8 @@ const InvitationView: React.FC<Props> = ({ data }) => {
           greeting={data.greeting}
           groom={data.groom}
           bride={data.bride}
-          groomParents={data.groomParents}
-          brideParents={data.brideParents}
+          groomParents={data.groomParents ?? {}}
+          brideParents={data.brideParents ?? {}}
         />
       </Reveal>
       <Reveal>
