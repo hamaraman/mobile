@@ -20,8 +20,11 @@ const MapSection: React.FC<Props> = ({ location }) => {
     window.open(`https://map.naver.com/v5/search/${encodeURIComponent(location.name || location.address)}`, '_blank');
 
   return (
-    <section className="py-12 px-6 space-y-4">
-      <div className="relative w-full h-[300px] rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+    <section className="px-6 pb-20 pt-4">
+      <div
+        className="w-full overflow-hidden border border-wedding-accent/20"
+        style={{ height: 280 }}
+      >
         <iframe
           src={src}
           width="100%"
@@ -33,12 +36,18 @@ const MapSection: React.FC<Props> = ({ location }) => {
         />
       </div>
 
-      <div className="flex gap-2">
-        <button onClick={openKakao} className="flex-1 py-3 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-colors text-wedding-primary">
+      <div className="flex gap-2 mt-3">
+        <button
+          onClick={openKakao}
+          className="flex-1 py-3 text-[11px] tracking-[0.28em] border border-wedding-accent/25 text-wedding-secondary/75 hover:border-wedding-accent/50 hover:text-wedding-primary transition-colors"
+        >
           카카오맵
         </button>
-        <button onClick={openNaver} className="flex-1 py-3 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-colors text-wedding-primary">
-          네이버 지도
+        <button
+          onClick={openNaver}
+          className="flex-1 py-3 text-[11px] tracking-[0.28em] border border-wedding-accent/25 text-wedding-secondary/75 hover:border-wedding-accent/50 hover:text-wedding-primary transition-colors"
+        >
+          네이버지도
         </button>
       </div>
     </section>

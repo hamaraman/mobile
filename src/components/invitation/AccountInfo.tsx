@@ -3,6 +3,7 @@ import type { Person } from '../../types/wedding';
 import { copyToClipboard } from '../../utils/clipboard';
 import { useToast } from '../../hooks/toastContext';
 import { ChevronDown, ChevronUp, Copy } from 'lucide-react';
+import OrnamentDivider from './OrnamentDivider';
 
 interface Props {
   groom: Person;
@@ -10,22 +11,22 @@ interface Props {
 }
 
 const AccountItem = ({ person, label, onCopy }: { person: Person, label: string, onCopy: (text: string) => void }) => (
-  <div className="border-b border-gray-100 py-4 last:border-0">
-    <div className="flex justify-between items-center mb-2">
-      <span className="text-sm text-wedding-secondary">{label}</span>
-      <span className="font-medium">{person.name}</span>
+  <div className="border-t border-wedding-accent/15 py-4 first:border-0">
+    <div className="flex justify-between items-center mb-3">
+      <span className="text-[10px] tracking-[0.3em] text-wedding-secondary/65">{label}</span>
+      <span className="font-serif text-sm tracking-wide text-wedding-primary">{person.name}</span>
     </div>
-    <div className="flex justify-between items-center bg-gray-50 p-3 rounded-md">
-      <div className="text-sm">
-        <p className="text-wedding-secondary">{person.bankInfo?.bankName || '신한은행'}</p>
-        <p className="font-mono">{person.bankInfo?.accountNumber || '110-123-456789'}</p>
+    <div className="flex justify-between items-center px-4 py-3 border border-wedding-accent/20">
+      <div>
+        <p className="text-[10px] tracking-widest text-wedding-secondary/60 mb-1">{person.bankInfo?.bankName || '신한은행'}</p>
+        <p className="text-sm font-mono tracking-widest text-wedding-primary/85">{person.bankInfo?.accountNumber || '110-123-456789'}</p>
       </div>
       <button
         onClick={() => onCopy(person.bankInfo?.accountNumber || '110-123-456789')}
-        className="p-2 text-wedding-accent hover:bg-wedding-accent/10 rounded-full transition-colors"
+        className="p-2 text-wedding-accent/50 hover:text-wedding-accent transition-colors"
         aria-label={`${person.name} 계좌번호 복사`}
       >
-        <Copy className="w-4 h-4" />
+        <Copy className="w-3.5 h-3.5" />
       </button>
     </div>
   </div>
@@ -45,41 +46,46 @@ const AccountInfo: React.FC<Props> = ({ groom, bride }) => {
   };
 
   return (
-    <section className="py-20 px-6" style={{ background: 'var(--t-section-bg, #FAF9F7)' }}>
-      <h2 className="text-xl tracking-[0.2em] text-wedding-accent text-center mb-12">MAUM</h2>
-      <p className="text-center serif text-sm text-wedding-secondary mb-12 leading-relaxed">
-        축하의 마음을 담아 보냅니다.<br />
-        전해주시는 따뜻한 마음 잊지 않고 잘 살겠습니다.
-      </p>
+    <section className="py-24 px-6" style={{ background: 'var(--t-page-bg, #FFFFFF)' }}>
+      <div className="text-center mb-14">
+        <p className="text-[9px] tracking-[0.45em] text-wedding-accent uppercase mb-4">Maeum</p>
+        <p className="font-serif text-[13px] text-wedding-secondary/75 leading-[1.9]">
+          축하의 마음을 담아 보냅니다.<br />
+          전해주시는 따뜻한 마음 잊지 않겠습니다.
+        </p>
+        <OrnamentDivider size="sm" className="max-w-[140px] mx-auto mt-8" />
+      </div>
 
-      <div className="space-y-4 max-w-sm mx-auto">
-        {/* Groom's side */}
-        <div className="rounded-lg shadow-sm border border-gray-100 overflow-hidden" style={{ background: 'var(--t-card-bg, #fff)' }}>
-          <button 
+      <div className="space-y-3 max-w-sm mx-auto">
+        <div className="border border-wedding-accent/20 overflow-hidden">
+          <button
             onClick={() => setOpenSection(openSection === 'groom' ? null : 'groom')}
-            className="w-full px-6 py-4 flex justify-between items-center text-wedding-primary"
+            className="w-full px-6 py-4 flex justify-between items-center"
           >
-            <span className="serif">신랑측 마음 전하실 곳</span>
-            {openSection === 'groom' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            <span className="text-[11px] tracking-[0.28em] font-light text-wedding-primary">신랑측 마음 전하실 곳</span>
+            {openSection === 'groom'
+              ? <ChevronUp className="w-3.5 h-3.5 text-wedding-accent/55" />
+              : <ChevronDown className="w-3.5 h-3.5 text-wedding-accent/55" />}
           </button>
           {openSection === 'groom' && (
-            <div className="px-6 pb-4">
+            <div className="px-6 pb-5">
               <AccountItem person={groom} label="신랑" onCopy={handleCopy} />
             </div>
           )}
         </div>
 
-        {/* Bride's side */}
-        <div className="rounded-lg shadow-sm border border-gray-100 overflow-hidden" style={{ background: 'var(--t-card-bg, #fff)' }}>
-          <button 
+        <div className="border border-wedding-accent/20 overflow-hidden">
+          <button
             onClick={() => setOpenSection(openSection === 'bride' ? null : 'bride')}
-            className="w-full px-6 py-4 flex justify-between items-center text-wedding-primary"
+            className="w-full px-6 py-4 flex justify-between items-center"
           >
-            <span className="serif">신부측 마음 전하실 곳</span>
-            {openSection === 'bride' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            <span className="text-[11px] tracking-[0.28em] font-light text-wedding-primary">신부측 마음 전하실 곳</span>
+            {openSection === 'bride'
+              ? <ChevronUp className="w-3.5 h-3.5 text-wedding-accent/55" />
+              : <ChevronDown className="w-3.5 h-3.5 text-wedding-accent/55" />}
           </button>
           {openSection === 'bride' && (
-            <div className="px-6 pb-4">
+            <div className="px-6 pb-5">
               <AccountItem person={bride} label="신부" onCopy={handleCopy} />
             </div>
           )}
@@ -90,4 +96,3 @@ const AccountInfo: React.FC<Props> = ({ groom, bride }) => {
 };
 
 export default AccountInfo;
-

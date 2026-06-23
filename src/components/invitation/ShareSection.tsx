@@ -26,30 +26,46 @@ const ShareSection: React.FC<Props> = ({ data }) => {
   };
 
   return (
-    <section className="py-12 px-6 bg-white flex flex-col items-center gap-6">
+    <section
+      className="py-16 px-6 flex flex-col items-center gap-8"
+      style={{ background: 'var(--t-section-bg, #FAF9F7)' }}
+    >
       {shareUrl ? (
-        <div className="w-full max-w-xs space-y-3 text-center">
-          <p className="text-[10px] tracking-[0.3em] uppercase text-wedding-accent font-bold">Share</p>
-          <p className="text-sm text-gray-500">이 청첩장을 소중한 분들께 전해보세요.</p>
-          <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5">
-            <LinkIcon className="w-4 h-4 text-gray-400 shrink-0" />
+        <div className="w-full max-w-xs space-y-4 text-center">
+          <p className="text-[9px] tracking-[0.45em] text-wedding-accent uppercase">Share</p>
+          <p className="text-[11px] tracking-wide text-wedding-secondary/65">이 청첩장을 소중한 분들께 전해보세요.</p>
+          <div className="flex items-center gap-2 border border-wedding-accent/25 px-4 py-3">
+            <LinkIcon className="w-3.5 h-3.5 text-wedding-secondary/40 shrink-0" />
             <input
               readOnly
               value={shareUrl}
               onFocus={e => e.currentTarget.select()}
-              className="flex-1 bg-transparent text-xs outline-none text-gray-600 truncate"
+              className="flex-1 bg-transparent text-[11px] outline-none text-wedding-secondary/65 truncate"
             />
-            <button onClick={copy} className="text-xs font-bold text-wedding-accent whitespace-nowrap">
+            <button
+              onClick={copy}
+              className="text-[10px] tracking-[0.2em] text-wedding-accent hover:text-wedding-primary transition-colors whitespace-nowrap uppercase"
+            >
               복사
             </button>
           </div>
         </div>
       ) : (
-        <p className="text-xs text-gray-400 text-center">발행하면 이 자리에 공유 링크가 표시됩니다.</p>
+        <p className="text-[11px] tracking-wide text-wedding-secondary/45 text-center">
+          발행하면 이 자리에 공유 링크가 표시됩니다.
+        </p>
       )}
 
-      <p className="text-xs text-gray-400 mt-4">
-        Copyright © {new Date().getFullYear()} {data.groom.name} & {data.bride.name}. All rights reserved.
+      <div className="w-full flex items-center gap-4 max-w-xs">
+        <div className="flex-1 h-px bg-wedding-accent/20" />
+        <p className="text-[9px] tracking-widest text-wedding-secondary/35 whitespace-nowrap">
+          {data.groom.name} &amp; {data.bride.name}
+        </p>
+        <div className="flex-1 h-px bg-wedding-accent/20" />
+      </div>
+
+      <p className="text-[9px] tracking-widest text-wedding-secondary/30">
+        © {new Date().getFullYear()} All rights reserved.
       </p>
     </section>
   );

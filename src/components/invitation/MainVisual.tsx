@@ -51,47 +51,82 @@ const MainVisual: React.FC<Props> = ({ data }) => {
   }, [data.weddingDate, data.weddingTime]);
 
   return (
-    <section className="relative h-[80vh] flex flex-col items-center justify-center overflow-hidden" style={{ background: 'var(--t-main-bg, #FDFBF7)' }}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="text-center z-10 space-y-4"
-      >
-        <p className="tracking-[0.3em] text-sm text-wedding-secondary mb-2">WEDDING DAY</p>
-        <h1 className="flex items-center justify-center gap-2 whitespace-nowrap text-3xl sm:text-4xl font-serif text-wedding-primary">
-          <span>{data.groom.name}</span>
-          <span className="text-2xl">&</span>
-          <span>{data.bride.name}</span>
-        </h1>
-        <div className="w-px h-12 bg-wedding-accent mx-auto my-6"></div>
-        <p className="serif text-lg text-wedding-secondary">{formattedDate}</p>
-        <p className="serif text-lg text-wedding-secondary">{data.location.name}</p>
+    <section
+      className="relative flex flex-col items-center justify-center overflow-hidden"
+      style={{ background: 'var(--t-main-bg, #FDFBF7)', minHeight: '100svh' }}
+    >
+      {/* 코너 브래킷 장식 */}
+      <div className="absolute top-8 left-8 w-10 h-10 border-t border-l border-wedding-accent/40 pointer-events-none" />
+      <div className="absolute top-8 right-8 w-10 h-10 border-t border-r border-wedding-accent/40 pointer-events-none" />
+      <div className="absolute bottom-8 left-8 w-10 h-10 border-b border-l border-wedding-accent/40 pointer-events-none" />
+      <div className="absolute bottom-8 right-8 w-10 h-10 border-b border-r border-wedding-accent/40 pointer-events-none" />
 
+      {/* 메인 콘텐츠 */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, ease: 'easeOut' }}
+        className="text-center z-10 px-12"
+      >
+        {/* WEDDING DAY 레이블 */}
+        <div className="flex items-center justify-center gap-3 mb-14">
+          <div className="w-10 h-px bg-wedding-accent/35" />
+          <span className="text-[9px] tracking-[0.45em] text-wedding-accent font-light">WEDDING DAY</span>
+          <div className="w-10 h-px bg-wedding-accent/35" />
+        </div>
+
+        {/* 이름 */}
+        <div className="space-y-3 mb-14">
+          <h1 className="font-serif text-[2.2rem] font-light tracking-[0.18em] text-wedding-primary leading-tight">
+            {data.groom.name || '신랑'}
+          </h1>
+          <div className="flex items-center justify-center py-1">
+            <svg width="14" height="14" viewBox="0 0 14 14" className="text-wedding-accent/55" fill="currentColor">
+              <path d="M7 0L8.4 5.6L14 7L8.4 8.4L7 14L5.6 8.4L0 7L5.6 5.6L7 0Z" />
+            </svg>
+          </div>
+          <h1 className="font-serif text-[2.2rem] font-light tracking-[0.18em] text-wedding-primary leading-tight">
+            {data.bride.name || '신부'}
+          </h1>
+        </div>
+
+        {/* 얇은 구분선 */}
+        <div className="w-14 h-px bg-wedding-accent/35 mx-auto mb-10" />
+
+        {/* 날짜 및 장소 */}
+        <div className="space-y-2 mb-12">
+          <p className="font-serif text-sm tracking-[0.15em] text-wedding-secondary font-light">{formattedDate}</p>
+          {data.location.name && (
+            <p className="text-[10px] tracking-[0.25em] text-wedding-secondary/70 uppercase mt-1">
+              {data.location.name}
+            </p>
+          )}
+        </div>
+
+        {/* D-Day 카운트다운 */}
         {data.weddingDate && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="mt-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
           >
             {isPast ? (
-              <p className="text-sm text-wedding-secondary tracking-widest serif">결혼식이 거행되었습니다</p>
+              <p className="text-[10px] tracking-[0.35em] text-wedding-secondary/60 uppercase">결혼식이 거행되었습니다</p>
             ) : (
-              <div className="flex items-end gap-5 justify-center">
+              <div className="inline-flex items-end gap-4 justify-center border border-wedding-accent/25 px-8 py-5">
                 {[
-                  { value: countdown.days, label: '일' },
-                  { value: countdown.hours, label: '시간' },
-                  { value: countdown.minutes, label: '분' },
-                  { value: countdown.seconds, label: '초' },
+                  { value: countdown.days, label: 'DAYS' },
+                  { value: countdown.hours, label: 'HRS' },
+                  { value: countdown.minutes, label: 'MIN' },
+                  { value: countdown.seconds, label: 'SEC' },
                 ].map(({ value, label }, i) => (
                   <React.Fragment key={label}>
-                    {i > 0 && <span className="text-wedding-accent/40 text-lg pb-5">:</span>}
-                    <div className="flex flex-col items-center">
-                      <span className="text-2xl font-serif font-light text-wedding-primary tabular-nums w-10 text-center">
+                    {i > 0 && <span className="text-wedding-accent/30 text-sm pb-5">·</span>}
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-2xl font-serif font-light text-wedding-primary tabular-nums w-10 text-center leading-none">
                         {String(value).padStart(2, '0')}
                       </span>
-                      <span className="text-[9px] tracking-widest text-wedding-secondary mt-1">{label}</span>
+                      <span className="text-[8px] tracking-[0.2em] text-wedding-secondary/55">{label}</span>
                     </div>
                   </React.Fragment>
                 ))}
@@ -101,34 +136,16 @@ const MainVisual: React.FC<Props> = ({ data }) => {
         )}
       </motion.div>
 
+      {/* 배경 앰비언트 글로우 */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <motion.div
-          className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-wedding-accent/5 rounded-full blur-3xl"
-          animate={{ x: [0, 20, 0], y: [0, 18, 0] }}
-          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+        <div
+          className="absolute top-[-25%] left-[-25%] w-[65%] h-[65%] rounded-full opacity-35"
+          style={{ background: 'radial-gradient(circle, var(--color-wedding-accent) 0%, transparent 70%)', filter: 'blur(90px)' }}
         />
-        <motion.div
-          className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-wedding-accent/10 rounded-full blur-3xl"
-          animate={{ x: [0, -24, 0], y: [0, -16, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        <div
+          className="absolute bottom-[-25%] right-[-25%] w-[65%] h-[65%] rounded-full opacity-25"
+          style={{ background: 'radial-gradient(circle, var(--color-wedding-accent) 0%, transparent 70%)', filter: 'blur(90px)' }}
         />
-
-        {/* Slowly drifting petals */}
-        {[
-          { left: '12%', size: 6, dur: 11, delay: 0 },
-          { left: '32%', size: 4, dur: 14, delay: 2.5 },
-          { left: '58%', size: 5, dur: 12, delay: 1.2 },
-          { left: '78%', size: 4, dur: 16, delay: 3.4 },
-          { left: '88%', size: 6, dur: 13, delay: 0.8 },
-        ].map((p, i) => (
-          <motion.span
-            key={i}
-            className="absolute top-[-8%] rounded-full bg-wedding-accent/30"
-            style={{ left: p.left, width: p.size, height: p.size }}
-            animate={{ y: ['0vh', '90vh'], x: [0, 14, -8, 0], opacity: [0, 0.8, 0.8, 0] }}
-            transition={{ duration: p.dur, repeat: Infinity, ease: 'linear', delay: p.delay }}
-          />
-        ))}
       </div>
     </section>
   );
