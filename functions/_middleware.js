@@ -62,6 +62,7 @@ export async function onRequest(context) {
   const imageUrl = hasImage
     ? `${url.origin}/api/invitations/${encodeURIComponent(id)}/og?v=${version}`
     : `${url.origin}/og-image.png`;
+  const canonicalUrl = `${url.origin}/?id=${encodeURIComponent(id)}`;
 
   return new HTMLRewriter()
     .on('title', {
@@ -70,6 +71,7 @@ export async function onRequest(context) {
       },
     })
     .on('meta[name="description"]', new SetMetaContent(description))
+    .on('meta[property="og:url"]', new SetMetaContent(canonicalUrl))
     .on('meta[property="og:title"]', new SetMetaContent(title))
     .on('meta[property="og:description"]', new SetMetaContent(description))
     .on('meta[property="og:image"]', new SetMetaContent(imageUrl))
