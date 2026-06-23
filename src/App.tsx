@@ -78,6 +78,9 @@ function App() {
     try {
       const { id, editToken } = await publishInvitation(newData);
       try { localStorage.setItem(`edit-token-${id}`, editToken); } catch { /* ignore */ }
+      // 발행 성공 후 임시 저장 데이터를 지운다. 다음 방문자가 이전 사람의 정보를 보지 않도록.
+      // 발행된 청첩장은 서버에 저장되어 ?id=xxx 링크로 계속 접근 가능하다.
+      try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
       // 발행 후 곧장 완성된 청첩장을 보여준다. URL을 공유 링크(?id=xxx)로 바꾸면
       // 청첩장 맨 하단 공유 영역에 그 링크가 표시되고, 새로고침해도 그대로 열린다.
       window.history.pushState({}, '', `${window.location.origin}/?id=${id}`);
