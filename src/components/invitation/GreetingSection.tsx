@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Person, WeddingData } from '../../types/wedding';
+import type { Person, WeddingData, DesignStyle } from '../../types/wedding';
 import OrnamentDivider from './OrnamentDivider';
 
 interface Props {
@@ -8,8 +8,10 @@ interface Props {
   bride: Person;
   groomParents: WeddingData['groomParents'];
   brideParents: WeddingData['brideParents'];
+  design?: DesignStyle;
 }
 
+/* 클래식 잎사귀 오너먼트 */
 const LeafOrnament = () => (
   <svg width="96" height="38" viewBox="0 0 96 38" fill="none" className="text-wedding-accent/40 mx-auto">
     <path d="M48 20 Q36 4 20 8 Q26 18 48 20Z" fill="currentColor" />
@@ -23,26 +25,77 @@ const LeafOrnament = () => (
   </svg>
 );
 
-const GreetingSection: React.FC<Props> = ({ greeting, groom, bride, groomParents, brideParents }) => {
+/* 로맨틱 꽃잎 오너먼트 */
+const FloralOrnament = () => (
+  <svg width="80" height="40" viewBox="0 0 80 40" fill="none" className="mx-auto" style={{ color: 'var(--color-wedding-accent)', opacity: 0.45 }}>
+    <path d="M40 20C40 20 30 8 18 12C22 22 40 20 40 20Z" fill="currentColor" />
+    <path d="M40 20C40 20 50 8 62 12C58 22 40 20 40 20Z" fill="currentColor" />
+    <path d="M40 20C40 20 28 12 22 4C28 6 40 20 40 20Z" fill="currentColor" opacity="0.5" />
+    <path d="M40 20C40 20 52 12 58 4C52 6 40 20 40 20Z" fill="currentColor" opacity="0.5" />
+    <circle cx="40" cy="20" r="3" fill="currentColor" opacity="0.7" />
+    <line x1="40" y1="23" x2="40" y2="36" stroke="currentColor" strokeWidth="0.8" />
+  </svg>
+);
+
+/* 미니멀 심플 라인 */
+const MinimalTop = () => (
+  <div className="flex items-center justify-center gap-6 mb-2">
+    <div className="w-12 h-px" style={{ background: 'var(--color-wedding-accent)', opacity: 0.3 }} />
+    <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--color-wedding-accent)', opacity: 0.4 }} />
+    <div className="w-12 h-px" style={{ background: 'var(--color-wedding-accent)', opacity: 0.3 }} />
+  </div>
+);
+
+/* 모던 섹션 레이블 */
+const ModernTop = () => (
+  <div className="mb-2">
+    <div className="w-10 h-1 mx-auto mb-3" style={{ background: 'var(--color-wedding-accent)' }} />
+    <p className="text-[10px] tracking-[0.5em] uppercase font-bold" style={{ color: 'var(--color-wedding-accent)' }}>
+      Invitation
+    </p>
+  </div>
+);
+
+const GreetingSection: React.FC<Props> = ({ greeting, groom, bride, groomParents, brideParents, design = 'classic' }) => {
   const hasParents =
     groomParents.father?.name || groomParents.mother?.name ||
     brideParents.father?.name || brideParents.mother?.name;
 
+  const contentFont: React.CSSProperties = design === 'modern'
+    ? { fontFamily: 'Pretendard Variable, Pretendard, sans-serif', fontSize: '0.95rem', lineHeight: 2.2 }
+    : { fontFamily: 'Gowun Batang, serif', fontSize: '1.05rem', lineHeight: 2.4 };
+
   return (
     <section className="py-24 px-8 text-center" style={{ background: 'var(--t-page-bg, #FFFFFF)' }}>
-      <LeafOrnament />
+      {/* 상단 장식 */}
+      <div className="mb-10">
+        {design === 'classic'  && <LeafOrnament />}
+        {design === 'romantic' && <FloralOrnament />}
+        {design === 'minimal'  && <MinimalTop />}
+        {design === 'modern'   && <ModernTop />}
+      </div>
 
-      <div className="mt-10 space-y-8">
-        <p className="text-[9px] tracking-[0.45em] text-wedding-accent uppercase">
+      <div className="space-y-8">
+        <p
+          className="text-[9px] tracking-[0.45em] uppercase"
+          style={{
+            color: 'var(--color-wedding-accent)',
+            fontStyle: design === 'classic' ? 'italic' : 'normal',
+            fontFamily: design === 'classic' ? 'Cormorant Garamond, serif' : 'inherit',
+          }}
+        >
           {greeting.title || '모시는 글'}
         </p>
 
-        <div className="font-serif text-[1.05rem] leading-[2.4] text-wedding-primary/80 whitespace-pre-wrap max-w-[260px] mx-auto">
+        <div
+          className="whitespace-pre-wrap max-w-[260px] mx-auto text-wedding-primary/80"
+          style={contentFont}
+        >
           {greeting.content || "서로가 마주보며 다진\n사랑을 이제 함께\n한 곳을 바라보며 걸어가려 합니다.\n\n저희의 새로운 시작을\n축복해주시면 감사하겠습니다."}
         </div>
       </div>
 
-      <OrnamentDivider className="mt-14 mb-10" />
+      <OrnamentDivider design={design} className="mt-14 mb-10" />
 
       <div>
         {hasParents ? (
@@ -54,7 +107,12 @@ const GreetingSection: React.FC<Props> = ({ greeting, groom, bride, groomParents
               {groomParents.mother?.name && (
                 <p className="text-[10px] tracking-wide text-wedding-secondary/70">{groomParents.mother.name}</p>
               )}
-              <p className="font-serif text-2xl font-light tracking-[0.1em] text-wedding-primary mt-3">{groom.name}</p>
+              <p
+                className="text-2xl font-light tracking-[0.1em] text-wedding-primary mt-3"
+                style={{ fontFamily: design === 'modern' ? 'Pretendard Variable, Pretendard, sans-serif' : 'Gowun Batang, serif' }}
+              >
+                {groom.name}
+              </p>
             </div>
             <div className="text-wedding-secondary/25 text-xl mt-5 flex-shrink-0">·</div>
             <div className="space-y-1 text-right flex-1">
@@ -64,14 +122,29 @@ const GreetingSection: React.FC<Props> = ({ greeting, groom, bride, groomParents
               {brideParents.mother?.name && (
                 <p className="text-[10px] tracking-wide text-wedding-secondary/70">{brideParents.mother.name}</p>
               )}
-              <p className="font-serif text-2xl font-light tracking-[0.1em] text-wedding-primary mt-3">{bride.name}</p>
+              <p
+                className="text-2xl font-light tracking-[0.12em] text-wedding-primary mt-3"
+                style={{ fontFamily: design === 'modern' ? 'Pretendard Variable, Pretendard, sans-serif' : 'Gowun Batang, serif' }}
+              >
+                {bride.name}
+              </p>
             </div>
           </div>
         ) : (
           <div className="flex items-center justify-center gap-5">
-            <span className="font-serif text-2xl font-light tracking-[0.12em] text-wedding-primary">{groom.name}</span>
+            <span
+              className="text-2xl font-light tracking-[0.12em] text-wedding-primary"
+              style={{ fontFamily: design === 'modern' ? 'Pretendard Variable, Pretendard, sans-serif' : 'Gowun Batang, serif' }}
+            >
+              {groom.name}
+            </span>
             <span className="text-[11px] tracking-[0.3em] text-wedding-secondary/60">그리고</span>
-            <span className="font-serif text-2xl font-light tracking-[0.12em] text-wedding-primary">{bride.name}</span>
+            <span
+              className="text-2xl font-light tracking-[0.12em] text-wedding-primary"
+              style={{ fontFamily: design === 'modern' ? 'Pretendard Variable, Pretendard, sans-serif' : 'Gowun Batang, serif' }}
+            >
+              {bride.name}
+            </span>
           </div>
         )}
       </div>

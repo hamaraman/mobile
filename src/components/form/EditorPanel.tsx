@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import type { WeddingData } from '../../types/wedding';
 import { TEMPLATES } from '../../utils/templates';
+import { DESIGN_THEMES } from '../../utils/design-themes';
 import { resizeImage } from '../../utils/image';
 import { openAddressSearch, geocodeAddress } from '../../utils/geocode';
 import { useToast } from '../../hooks/toastContext';
@@ -226,9 +227,40 @@ const EditorPanel: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting 
 
       <Divider />
 
-      {/* ⑤ 테마 색감 */}
+      {/* ⑤ 디자인 스타일 */}
       <section>
-        <SectionHeader num={5} title="테마 색감" />
+        <SectionHeader num={5} title="디자인 스타일" />
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          {DESIGN_THEMES.map(theme => {
+            const selected = (data.designStyle ?? 'classic') === theme.key;
+            return (
+              <button
+                key={theme.key}
+                type="button"
+                onClick={() => update(prev => ({ ...prev, designStyle: theme.key }))}
+                className="flex flex-col items-start gap-0.5 px-4 py-3 rounded-xl border-2 text-left transition-all"
+                style={{
+                  borderColor: selected ? '#C9A36B' : '#E8E0D2',
+                  background: selected ? '#FFF8EE' : '#FFFDF9',
+                }}
+              >
+                <span className="text-sm font-medium" style={{ color: selected ? '#C9A36B' : '#3A342D' }}>
+                  {theme.name}
+                </span>
+                <span className="text-[10px]" style={{ color: '#A89C8C' }}>
+                  {theme.desc}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <Divider />
+
+      {/* ⑥ 테마 색감 */}
+      <section>
+        <SectionHeader num={6} title="테마 색감" />
         <div className="grid grid-cols-4 gap-x-3 gap-y-4 mb-3">
           {TEMPLATES.map(tpl => {
             const selected = (data.template ?? 'ivory') === tpl.key;
@@ -263,9 +295,11 @@ const EditorPanel: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting 
 
       <Divider />
 
+      <Divider />
+
       {/* 갤러리 */}
       <section>
-        <SectionHeader num={6} title="갤러리 사진" />
+        <SectionHeader num={7} title="갤러리 사진" />
         <div className="grid grid-cols-3 gap-2 mb-3">
           {data.galleryImages.map((src, idx) => (
             <div key={idx} className="relative aspect-square rounded-lg overflow-hidden group border" style={{ borderColor: '#E8E0D2' }}>

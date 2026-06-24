@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import type { WeddingData } from '../../types/wedding';
+import type { DesignStyle } from '../../utils/design-themes';
 import { getTemplate } from '../../utils/templates';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import MainVisual from './MainVisual';
@@ -19,6 +20,7 @@ interface Props {
 
 const InvitationView: React.FC<Props> = ({ data, isPreview }) => {
   const tpl = getTemplate(data.template);
+  const design: DesignStyle = data.designStyle ?? 'classic';
 
   const names = data.groom.name && data.bride.name
     ? `${data.groom.name} ♥ ${data.bride.name}`
@@ -29,7 +31,6 @@ const InvitationView: React.FC<Props> = ({ data, isPreview }) => {
   });
 
   useEffect(() => {
-    // 미리보기 모드에서는 전역 CSS 변수 대신 인라인으로만 처리한다.
     if (isPreview) return;
     const root = document.documentElement;
     root.style.setProperty('--color-wedding-accent', tpl.accent);
@@ -47,7 +48,6 @@ const InvitationView: React.FC<Props> = ({ data, isPreview }) => {
     };
   }, [tpl, isPreview]);
 
-  // 인라인 CSS 변수로 테마 적용 (미리보기 격리용)
   const themeVars: React.CSSProperties = {
     '--color-wedding-accent': tpl.accent,
     '--color-wedding-primary': tpl.primary,
@@ -63,7 +63,7 @@ const InvitationView: React.FC<Props> = ({ data, isPreview }) => {
       className="min-h-screen pb-20 overflow-x-hidden"
       style={{ background: tpl.pageBg, ...themeVars }}
     >
-      <MainVisual data={data} />
+      <MainVisual data={data} design={design} />
       <Reveal>
         <GreetingSection
           greeting={data.greeting}
@@ -71,6 +71,7 @@ const InvitationView: React.FC<Props> = ({ data, isPreview }) => {
           bride={data.bride}
           groomParents={data.groomParents ?? {}}
           brideParents={data.brideParents ?? {}}
+          design={design}
         />
       </Reveal>
       <Reveal>

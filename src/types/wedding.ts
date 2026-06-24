@@ -1,7 +1,9 @@
 import type { TemplateKey } from '../utils/templates';
+import type { DesignStyle } from '../utils/design-themes';
 
 export type { TemplateKey };
 export type { Template } from '../utils/templates';
+export type { DesignStyle };
 
 export type Person = {
   name: string;
@@ -39,4 +41,5 @@ export type WeddingData = {
   };
   galleryImages: string[];
   template?: TemplateKey;
+  designStyle?: DesignStyle;
 }
