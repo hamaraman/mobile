@@ -16,9 +16,10 @@ import Reveal from './Reveal';
 interface Props {
   data: WeddingData;
   isPreview?: boolean;
+  hideShare?: boolean;
 }
 
-const InvitationView: React.FC<Props> = ({ data, isPreview }) => {
+const InvitationView: React.FC<Props> = ({ data, isPreview, hideShare }) => {
   const tpl = getTemplate(data.template);
   const design: DesignStyle = data.designStyle ?? 'classic';
 
@@ -87,7 +88,7 @@ const InvitationView: React.FC<Props> = ({ data, isPreview }) => {
       <Reveal>
         <AccountInfo groom={data.groom} bride={data.bride} />
       </Reveal>
-      {!isPreview && (
+      {!isPreview && !hideShare && (
         <Reveal>
           <ShareSection data={data} />
         </Reveal>

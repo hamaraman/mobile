@@ -33,5 +33,5 @@ export default function PublishedInvitation({ id }: { id: string }) {
     );
   }
 
-  return <InvitationView data={data} />;
+  return <InvitationView data={data} hideShare />;
 }
