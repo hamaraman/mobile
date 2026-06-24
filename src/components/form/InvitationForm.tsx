@@ -25,7 +25,7 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData, is
     location: { name: '', address: '', detailAddress: '' },
     greeting: { title: '모시는 글', content: '' },
     galleryImages: [],
-    template: 'minimal',
+    template: 'ivory',
   });
 
   const nextStep = () => setStep(s => s + 1);

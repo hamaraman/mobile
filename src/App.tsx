@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { WeddingData } from './types/wedding';
-import InvitationForm from './components/form/InvitationForm';
-import InvitationView from './components/invitation/InvitationView';
+import LandingPage from './components/LandingPage';
+import EditorLayout from './components/EditorLayout';
 import PublishedInvitation from './components/invitation/PublishedInvitation';
+import InvitationView from './components/invitation/InvitationView';
 import { publishInvitation } from './utils/api';
 import { ToastProvider } from './hooks/useToast';
 import { useToast } from './hooks/toastContext';
 
 const STORAGE_KEY = 'wedding-invitation-data';
 
-// 편집기에서 새 청첩장을 만들 때 시작점이 되는 예시 데이터.
 const INITIAL_DATA: WeddingData = {
   groom: { name: '', phoneNumber: '' },
   bride: { name: '', phoneNumber: '' },
@@ -23,13 +23,20 @@ const INITIAL_DATA: WeddingData = {
     content: '서로가 마주보며 다진 사랑을 이제 함께\n한 곳을 바라보며 걸어가려 합니다.\n\n저희의 새로운 시작을\n축복해주시면 감사하겠습니다.',
   },
   galleryImages: [],
-  template: 'minimal',
+  template: 'ivory',
 };
 
 function loadData(): WeddingData {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? (JSON.parse(saved) as WeddingData) : INITIAL_DATA;
+    if (!saved) return INITIAL_DATA;
+    const parsed = JSON.parse(saved) as WeddingData;
+    // 기존 데이터에 template이 구 스펙이면 기본값으로 리셋
+    const validTemplates = ['ivory', 'blush', 'sage', 'blue'];
+    if (!validTemplates.includes(parsed.template as string)) {
+      parsed.template = 'ivory';
+    }
+    return parsed;
   } catch {
     return INITIAL_DATA;
   }
@@ -39,50 +46,59 @@ function saveData(data: WeddingData): boolean {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     return true;
-  } catch (err) {
-    console.warn('Failed to persist wedding data:', err);
+  } catch {
     return false;
   }
 }
 
-// 공유 링크(?id=xxx)로 들어온 방문자는 서버에 저장된 청첩장을 본다.
-const VIEW_ID = new URLSearchParams(window.location.search).get('id');
+// URL 파라미터로 현재 모드를 결정한다.
+const params = new URLSearchParams(window.location.search);
+const VIEW_ID = params.get('id');
+
+function getInitialMode(): 'landing' | 'editor' | 'published' {
+  if (VIEW_ID) return 'published';
+  if (params.has('edit')) return 'editor';
+  return 'landing';
+}
 
 function App() {
+  const [mode, setMode] = useState<'landing' | 'editor' | 'published'>(getInitialMode);
   const [data, setData] = useState<WeddingData>(loadData);
   const [publishing, setPublishing] = useState(false);
   const [publishedId, setPublishedId] = useState<string | null>(null);
+  const [autoSaved, setAutoSaved] = useState(true);
   const { toast } = useToast();
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 1) 공유 링크로 들어온 방문자 → 서버에서 불러와 청첩장만 표시
-  if (VIEW_ID) {
+  // 모든 훅은 조건부 반환 이전에 선언해야 한다.
+  const handleChange = useCallback((newData: WeddingData) => {
+    setData(newData);
+    setAutoSaved(false);
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      const ok = saveData(newData);
+      setAutoSaved(ok);
+    }, 800);
+  }, []);
+
+  // 발행된 뷰 (공유 링크 방문자)
+  if (mode === 'published' && VIEW_ID && !publishedId) {
     return <PublishedInvitation id={VIEW_ID} />;
   }
 
-  const persist = (newData: WeddingData) => {
-    if (!saveData(newData)) {
-      toast('이미지 용량이 커서 임시 저장에 실패했습니다.', 'error');
-    }
-  };
+  // 발행 완료 후 청첩장 뷰
+  if (publishedId) {
+    return <InvitationView data={data} />;
+  }
 
-  const handleChange = (newData: WeddingData) => {
+  const handlePublish = async (newData: WeddingData) => {
     setData(newData);
-    persist(newData);
-  };
-
-  // 2) 발행: 서버에 저장하고 공유 링크를 발급받는다.
-  const handleComplete = async (newData: WeddingData) => {
-    setData(newData);
-    persist(newData);
+    saveData(newData);
     setPublishing(true);
     try {
       const { id, editToken } = await publishInvitation(newData);
       try { localStorage.setItem(`edit-token-${id}`, editToken); } catch { /* ignore */ }
-      // 발행 성공 후 임시 저장 데이터를 지운다. 다음 방문자가 이전 사람의 정보를 보지 않도록.
-      // 발행된 청첩장은 서버에 저장되어 ?id=xxx 링크로 계속 접근 가능하다.
       try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
-      // 발행 후 곧장 완성된 청첩장을 보여준다. URL을 공유 링크(?id=xxx)로 바꾸면
-      // 청첩장 맨 하단 공유 영역에 그 링크가 표시되고, 새로고침해도 그대로 열린다.
       window.history.pushState({}, '', `${window.location.origin}/?id=${id}`);
       setPublishedId(id);
       toast('청첩장이 발행되었습니다. 맨 아래에서 공유 링크를 확인하세요. 🎉');
@@ -93,34 +109,29 @@ function App() {
     }
   };
 
-  // 3) 발행 완료 → 완성된 청첩장 표시 (공유 링크는 맨 하단 ShareSection에 노출)
-  if (publishedId) {
-    return <InvitationView data={data} />;
+  const goToEditor = () => {
+    window.history.pushState({}, '', '?edit');
+    setMode('editor');
+  };
+
+  const goToLanding = () => {
+    window.history.pushState({}, '', '/');
+    setMode('landing');
+  };
+
+  if (mode === 'landing') {
+    return <LandingPage onStart={goToEditor} />;
   }
 
-  // 4) 편집기 (생성/수정)
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-[#FCFAF7]">
-      {/* Form Section */}
-      <div className="w-full lg:w-1/2 overflow-y-auto max-h-screen border-r border-gray-100">
-        <InvitationForm
-          initialData={data}
-          onChange={handleChange}
-          onComplete={handleComplete}
-          isSubmitting={publishing}
-        />
-      </div>
-
-      {/* Real-time Preview Section (Desktop) */}
-      <div className="hidden lg:block lg:w-1/2 bg-gray-50 overflow-y-auto max-h-screen p-12">
-        <div className="max-w-[420px] mx-auto shadow-2xl rounded-[3rem] overflow-hidden border-[8px] border-black aspect-[9/19.5]">
-          <div className="w-full h-full overflow-y-auto bg-white custom-scrollbar">
-            <InvitationView data={data} />
-          </div>
-        </div>
-        <p className="text-center mt-6 text-xs text-gray-400 font-serif italic">Mobile Preview</p>
-      </div>
-    </div>
+    <EditorLayout
+      data={data}
+      onChange={handleChange}
+      onPublish={handlePublish}
+      isSubmitting={publishing}
+      autoSaved={autoSaved}
+      onBack={goToLanding}
+    />
   );
 }
 

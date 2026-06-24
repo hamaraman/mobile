@@ -10,6 +10,11 @@ interface Props {
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
+const MONTH_EN = [
+  'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+  'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER',
+];
+
 const CalendarSection: React.FC<Props> = ({ date, groomName, brideName }) => {
   const d = date ? new Date(date) : null;
   if (!d || isNaN(d.getTime())) return null;
@@ -31,32 +36,46 @@ const CalendarSection: React.FC<Props> = ({ date, groomName, brideName }) => {
   const weddingMidnight = new Date(year, month, weddingDay);
   const dDay = Math.round((weddingMidnight.getTime() - startOfToday.getTime()) / 86400000);
 
-  const dDayText =
-    dDay > 0 ? `D - ${dDay}`
-    : dDay === 0 ? 'D - Day'
-    : `D + ${Math.abs(dDay)}`;
-
-  const dDayDesc =
-    dDay > 0 ? '결혼식이 다가오고 있습니다'
-    : dDay === 0 ? '오늘은 저희의 결혼식입니다'
-    : '결혼식이 거행되었습니다';
+  // D-Day 뱃지 텍스트
+  let dDayTop: string;
+  let dDayBottom: string;
+  if (dDay > 0) {
+    dDayTop = `D - ${dDay}`;
+    dDayBottom = `${dDay}일 남았어요`;
+  } else if (dDay === 0) {
+    dDayTop = 'D - DAY';
+    dDayBottom = '오늘이에요';
+  } else {
+    dDayTop = `D + ${Math.abs(dDay)}`;
+    dDayBottom = `함께한 날`;
+  }
 
   return (
-    <section className="py-24 px-8" style={{ background: 'var(--t-page-bg, #FFFFFF)' }}>
+    <section className="py-24 px-8" style={{ background: 'var(--t-page-bg, #FBF8F2)' }}>
       <Reveal>
-        <div className="text-center mb-12">
-          <p className="text-[9px] tracking-[0.45em] text-wedding-accent uppercase">Calendar</p>
-          <p className="font-serif text-sm text-wedding-secondary/65 mt-2 tracking-widest">
-            {year}년 {month + 1}월
+        <div className="text-center mb-10">
+          <p
+            className="text-[10px] tracking-[0.45em] uppercase mb-1"
+            style={{ fontFamily: 'Cormorant Garamond, serif', color: 'var(--color-wedding-accent)', fontStyle: 'italic' }}
+          >
+            Save the Date
+          </p>
+          <p
+            className="text-lg tracking-widest"
+            style={{ fontFamily: 'Cormorant Garamond, serif', color: 'var(--color-wedding-secondary, #9A8F80)' }}
+          >
+            {MONTH_EN[month]} {year}
           </p>
         </div>
 
         <div className="max-w-[280px] mx-auto">
+          {/* 요일 헤더 */}
           <div className="grid grid-cols-7 gap-y-2 text-center mb-1">
             {WEEKDAYS.map((w, i) => (
               <span
                 key={w}
-                className={`text-[10px] tracking-wider pb-2 ${i === 0 ? 'text-rose-400/75' : 'text-wedding-secondary/55'}`}
+                className="text-[10px] tracking-wider pb-2"
+                style={{ color: i === 0 ? '#C98A7A' : 'var(--color-wedding-secondary, #9A8F80)', opacity: 0.7 }}
               >
                 {w}
               </span>
@@ -69,16 +88,18 @@ const CalendarSection: React.FC<Props> = ({ date, groomName, brideName }) => {
                 <div key={idx} className="flex items-center justify-center h-9">
                   {day && (
                     <span
-                      className={
-                        isWedding
-                          ? 'relative flex items-center justify-center w-9 h-9 text-[13px] font-serif text-white'
-                          : `text-[13px] ${isSunday ? 'text-rose-400/65' : 'text-wedding-primary/70'}`
-                      }
+                      className={isWedding
+                        ? 'relative flex items-center justify-center w-9 h-9 text-[13px] font-serif text-white'
+                        : 'text-[13px]'}
+                      style={!isWedding ? { color: isSunday ? '#C98A7A' : 'var(--color-wedding-primary, #4A423A)', opacity: 0.75 } : undefined}
                     >
                       {isWedding && (
-                        <span className="absolute inset-0 rounded-full bg-wedding-accent" />
+                        <span
+                          className="absolute inset-0 rounded-full"
+                          style={{ background: 'var(--color-wedding-accent)' }}
+                        />
                       )}
-                      <span className="relative">{day}</span>
+                      <span className="relative" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{day}</span>
                     </span>
                   )}
                 </div>
@@ -88,16 +109,31 @@ const CalendarSection: React.FC<Props> = ({ date, groomName, brideName }) => {
 
           <OrnamentDivider className="mt-10 mb-8" />
 
-          <div className="text-center space-y-2">
-            <p className="font-serif text-2xl font-light tracking-[0.08em] text-wedding-accent">{dDayText}</p>
-            <p className="font-serif text-sm text-wedding-secondary tracking-wider mt-1">
-              {groomName}
-              <svg width="10" height="10" viewBox="0 0 10 10" className="inline text-wedding-accent/50 mx-2 mb-0.5" fill="currentColor">
-                <path d="M5 0L5.8 3.6L10 5L5.8 6.4L5 10L4.2 6.4L0 5L4.2 3.6L5 0Z" />
-              </svg>
-              {brideName}
+          {/* D-Day 뱃지 */}
+          <div className="text-center">
+            <div
+              className="inline-flex flex-col items-center gap-1 px-6 py-3 rounded-full"
+              style={{ background: 'color-mix(in srgb, var(--color-wedding-accent, #C9A36B) 12%, transparent)' }}
+            >
+              <p
+                className="text-xl font-light"
+                style={{ fontFamily: 'Cormorant Garamond, serif', color: 'var(--color-wedding-accent)' }}
+              >
+                {dDayTop}
+              </p>
+              <p className="text-[11px] tracking-wider" style={{ color: 'var(--color-wedding-secondary, #9A8F80)' }}>
+                {dDayBottom}
+              </p>
+            </div>
+
+            <p
+              className="mt-4 text-sm tracking-wider"
+              style={{ fontFamily: 'Gowun Batang, serif', color: 'var(--color-wedding-secondary, #9A8F80)' }}
+            >
+              {groomName || '신랑'}
+              <span className="mx-2" style={{ fontFamily: 'Cormorant Garamond, serif', color: 'var(--color-wedding-accent)', fontStyle: 'italic' }}>&</span>
+              {brideName || '신부'}
             </p>
-            <p className="text-[10px] tracking-[0.25em] text-wedding-secondary/55">{dDayDesc}</p>
           </div>
         </div>
       </Reveal>

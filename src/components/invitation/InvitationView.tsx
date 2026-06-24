@@ -14,9 +14,10 @@ import Reveal from './Reveal';
 
 interface Props {
   data: WeddingData;
+  isPreview?: boolean;
 }
 
-const InvitationView: React.FC<Props> = ({ data }) => {
+const InvitationView: React.FC<Props> = ({ data, isPreview }) => {
   const tpl = getTemplate(data.template);
 
   const names = data.groom.name && data.bride.name
@@ -28,6 +29,8 @@ const InvitationView: React.FC<Props> = ({ data }) => {
   });
 
   useEffect(() => {
+    // 미리보기 모드에서는 전역 CSS 변수 대신 인라인으로만 처리한다.
+    if (isPreview) return;
     const root = document.documentElement;
     root.style.setProperty('--color-wedding-accent', tpl.accent);
     root.style.setProperty('--color-wedding-primary', tpl.primary);
@@ -42,12 +45,23 @@ const InvitationView: React.FC<Props> = ({ data }) => {
         root.style.removeProperty(v)
       );
     };
-  }, [tpl]);
+  }, [tpl, isPreview]);
+
+  // 인라인 CSS 변수로 테마 적용 (미리보기 격리용)
+  const themeVars: React.CSSProperties = {
+    '--color-wedding-accent': tpl.accent,
+    '--color-wedding-primary': tpl.primary,
+    '--color-wedding-secondary': tpl.secondary,
+    '--t-main-bg': tpl.mainBg,
+    '--t-section-bg': tpl.sectionBg,
+    '--t-page-bg': tpl.pageBg,
+    '--t-card-bg': tpl.cardBg,
+  } as React.CSSProperties;
 
   return (
     <div
-      className="max-w-screen-sm mx-auto shadow-xl min-h-screen pb-20 overflow-x-hidden"
-      style={{ background: tpl.pageBg }}
+      className="min-h-screen pb-20 overflow-x-hidden"
+      style={{ background: tpl.pageBg, ...themeVars }}
     >
       <MainVisual data={data} />
       <Reveal>
@@ -64,17 +78,19 @@ const InvitationView: React.FC<Props> = ({ data }) => {
       </Reveal>
       <CalendarSection date={data.weddingDate} groomName={data.groom.name} brideName={data.bride.name} />
       <Reveal>
-        <MapSection location={data.location} />
+        <Gallery images={data.galleryImages} />
       </Reveal>
       <Reveal>
-        <Gallery images={data.galleryImages} />
+        <MapSection location={data.location} />
       </Reveal>
       <Reveal>
         <AccountInfo groom={data.groom} bride={data.bride} />
       </Reveal>
-      <Reveal>
-        <ShareSection data={data} />
-      </Reveal>
+      {!isPreview && (
+        <Reveal>
+          <ShareSection data={data} />
+        </Reveal>
+      )}
     </div>
   );
 };

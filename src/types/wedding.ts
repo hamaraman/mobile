@@ -1,6 +1,7 @@
 import type { TemplateKey } from '../utils/templates';
 
 export type { TemplateKey };
+export type { Template } from '../utils/templates';
 
 export type Person = {
   name: string;
