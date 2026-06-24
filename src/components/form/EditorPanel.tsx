@@ -229,7 +229,7 @@ const EditorPanel: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting 
       {/* ⑤ 테마 색감 */}
       <section>
         <SectionHeader num={5} title="테마 색감" />
-        <div className="flex gap-4 mb-3">
+        <div className="grid grid-cols-4 gap-x-3 gap-y-4 mb-3">
           {TEMPLATES.map(tpl => {
             const selected = (data.template ?? 'ivory') === tpl.key;
             return (
@@ -241,7 +241,7 @@ const EditorPanel: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting 
                 className="flex flex-col items-center gap-1.5 transition-all"
               >
                 <div
-                  className="w-9 h-9 rounded-full transition-all"
+                  className="w-10 h-10 rounded-full transition-all"
                   style={{
                     background: tpl.accent,
                     boxShadow: selected

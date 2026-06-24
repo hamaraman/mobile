@@ -89,8 +89,8 @@ const CalendarSection: React.FC<Props> = ({ date, groomName, brideName }) => {
                   {day && (
                     <span
                       className={isWedding
-                        ? 'relative flex items-center justify-center w-9 h-9 text-[13px] font-serif text-white'
-                        : 'text-[13px]'}
+                        ? 'relative flex items-center justify-center w-9 h-9 text-[15px] font-serif text-white'
+                        : 'text-[15px]'}
                       style={!isWedding ? { color: isSunday ? '#C98A7A' : 'var(--color-wedding-primary, #4A423A)', opacity: 0.75 } : undefined}
                     >
                       {isWedding && (
@@ -116,7 +116,7 @@ const CalendarSection: React.FC<Props> = ({ date, groomName, brideName }) => {
               style={{ background: 'color-mix(in srgb, var(--color-wedding-accent, #C9A36B) 12%, transparent)' }}
             >
               <p
-                className="text-xl font-light"
+                className="text-2xl font-light"
                 style={{ fontFamily: 'Cormorant Garamond, serif', color: 'var(--color-wedding-accent)' }}
               >
                 {dDayTop}

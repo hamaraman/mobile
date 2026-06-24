@@ -27,19 +27,19 @@ const WeddingInfo: React.FC<Props> = ({ date, time, location }) => {
       <div className="max-w-xs mx-auto space-y-10">
         <div className="space-y-2">
           <p className="text-[9px] tracking-[0.4em] text-wedding-secondary/60 uppercase mb-4">Date &amp; Time</p>
-          <p className="font-serif text-xl font-light tracking-wide text-wedding-primary">{formattedDate}</p>
+          <p className="font-serif text-2xl font-light tracking-wide text-wedding-primary">{formattedDate}</p>
           {weekday && (
             <p className="text-xs tracking-[0.2em] text-wedding-secondary/70">{weekday}</p>
           )}
-          <p className="font-serif text-lg tracking-widest text-wedding-primary/75 mt-2">{time || '오후 12:30'}</p>
+          <p className="font-serif text-xl tracking-widest text-wedding-primary/75 mt-2">{time || '오후 12:30'}</p>
         </div>
 
         <div className="w-px h-8 bg-wedding-accent/25 mx-auto" />
 
         <div className="space-y-2">
           <p className="text-[9px] tracking-[0.4em] text-wedding-secondary/60 uppercase mb-4">Venue</p>
-          <p className="font-serif text-xl font-light tracking-wide text-wedding-primary">{location.name}</p>
-          <p className="text-sm text-wedding-secondary/75 tracking-wide mt-2 leading-relaxed">{location.address}</p>
+          <p className="font-serif text-2xl font-light tracking-wide text-wedding-primary">{location.name}</p>
+          <p className="text-base text-wedding-secondary/75 tracking-wide mt-2 leading-relaxed">{location.address}</p>
           {location.detailAddress && (
             <p className="text-sm text-wedding-secondary/60 tracking-wide">{location.detailAddress}</p>
           )}

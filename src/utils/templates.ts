@@ -1,4 +1,6 @@
-export type TemplateKey = 'ivory' | 'blush' | 'sage' | 'blue';
+export type TemplateKey =
+  | 'ivory' | 'blush' | 'sage' | 'blue'
+  | 'mocha' | 'lavender' | 'rosegold' | 'charcoal';
 
 export interface Template {
   key: TemplateKey;
@@ -61,6 +63,54 @@ export const TEMPLATES: Template[] = [
     sectionBg: '#E2EAF1',
     pageBg: '#F1F5F8',
     cardBg: '#E2EAF1',
+  },
+  {
+    key: 'mocha',
+    name: '모카',
+    accent: '#A07850',
+    primary: '#3D2B1F',
+    secondary: '#8C7060',
+    soft: '#D4B898',
+    mainBg: '#FAF5EF',
+    sectionBg: '#F0E6D8',
+    pageBg: '#FAF5EF',
+    cardBg: '#F0E6D8',
+  },
+  {
+    key: 'lavender',
+    name: '라벤더',
+    accent: '#9B8EC4',
+    primary: '#3D3055',
+    secondary: '#9088A8',
+    soft: '#CFC8E8',
+    mainBg: '#F6F4FB',
+    sectionBg: '#EDE9F6',
+    pageBg: '#F6F4FB',
+    cardBg: '#EDE9F6',
+  },
+  {
+    key: 'rosegold',
+    name: '로즈골드',
+    accent: '#C4856A',
+    primary: '#4A2D28',
+    secondary: '#A07060',
+    soft: '#E8C4B8',
+    mainBg: '#FDF6F3',
+    sectionBg: '#F5E8E3',
+    pageBg: '#FDF6F3',
+    cardBg: '#F5E8E3',
+  },
+  {
+    key: 'charcoal',
+    name: '차콜',
+    accent: '#8C9898',
+    primary: '#1E2428',
+    secondary: '#707878',
+    soft: '#C0CACA',
+    mainBg: '#F4F6F6',
+    sectionBg: '#E8ECEC',
+    pageBg: '#F4F6F6',
+    cardBg: '#E8ECEC',
   },
 ];
 

@@ -98,21 +98,21 @@ const MainVisual: React.FC<Props> = ({ data }) => {
         {/* 이름 */}
         <div className="space-y-2 mb-10">
           <h1
-            className="text-[2rem] font-normal tracking-[0.15em] leading-tight"
+            className="text-[2.6rem] font-normal tracking-[0.15em] leading-tight"
             style={{ fontFamily: 'Gowun Batang, serif', color: 'var(--color-wedding-primary, #4A423A)' }}
           >
             {data.groom.name || '신랑'}
           </h1>
           <div className="flex items-center justify-center py-1">
             <span
-              className="text-2xl"
+              className="text-3xl"
               style={{ fontFamily: 'Cormorant Garamond, serif', color: 'var(--color-wedding-accent)', fontStyle: 'italic' }}
             >
               &
             </span>
           </div>
           <h1
-            className="text-[2rem] font-normal tracking-[0.15em] leading-tight"
+            className="text-[2.6rem] font-normal tracking-[0.15em] leading-tight"
             style={{ fontFamily: 'Gowun Batang, serif', color: 'var(--color-wedding-primary, #4A423A)' }}
           >
             {data.bride.name || '신부'}
@@ -125,14 +125,14 @@ const MainVisual: React.FC<Props> = ({ data }) => {
         {/* 날짜 및 장소 */}
         <div className="space-y-1.5 mb-10">
           <p
-            className="text-sm tracking-[0.2em]"
+            className="text-base tracking-[0.2em]"
             style={{ fontFamily: 'Cormorant Garamond, serif', color: 'var(--color-wedding-secondary, #9A8F80)' }}
           >
             {dateDisplay}
           </p>
           {weekdayDisplay && (
             <p
-              className="text-[11px] tracking-wider"
+              className="text-[13px] tracking-wider"
               style={{ fontFamily: 'Gowun Batang, serif', color: 'var(--color-wedding-secondary, #9A8F80)', opacity: 0.8 }}
             >
               {weekdayDisplay}
@@ -140,7 +140,7 @@ const MainVisual: React.FC<Props> = ({ data }) => {
           )}
           {data.location.name && (
             <p
-              className="text-[10px] tracking-[0.25em] uppercase mt-1"
+              className="text-xs tracking-[0.25em] uppercase mt-1"
               style={{ color: 'var(--color-wedding-secondary, #9A8F80)', opacity: 0.7 }}
             >
               {data.location.name}

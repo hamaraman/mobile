@@ -37,7 +37,7 @@ const GreetingSection: React.FC<Props> = ({ greeting, groom, bride, groomParents
           {greeting.title || '모시는 글'}
         </p>
 
-        <div className="font-serif text-[0.9rem] leading-[2.3] text-wedding-primary/80 whitespace-pre-wrap max-w-[240px] mx-auto">
+        <div className="font-serif text-[1.05rem] leading-[2.4] text-wedding-primary/80 whitespace-pre-wrap max-w-[260px] mx-auto">
           {greeting.content || "서로가 마주보며 다진\n사랑을 이제 함께\n한 곳을 바라보며 걸어가려 합니다.\n\n저희의 새로운 시작을\n축복해주시면 감사하겠습니다."}
         </div>
       </div>
@@ -54,7 +54,7 @@ const GreetingSection: React.FC<Props> = ({ greeting, groom, bride, groomParents
               {groomParents.mother?.name && (
                 <p className="text-[10px] tracking-wide text-wedding-secondary/70">{groomParents.mother.name}</p>
               )}
-              <p className="font-serif text-xl font-light tracking-[0.1em] text-wedding-primary mt-3">{groom.name}</p>
+              <p className="font-serif text-2xl font-light tracking-[0.1em] text-wedding-primary mt-3">{groom.name}</p>
             </div>
             <div className="text-wedding-secondary/25 text-xl mt-5 flex-shrink-0">·</div>
             <div className="space-y-1 text-right flex-1">
@@ -64,14 +64,14 @@ const GreetingSection: React.FC<Props> = ({ greeting, groom, bride, groomParents
               {brideParents.mother?.name && (
                 <p className="text-[10px] tracking-wide text-wedding-secondary/70">{brideParents.mother.name}</p>
               )}
-              <p className="font-serif text-xl font-light tracking-[0.1em] text-wedding-primary mt-3">{bride.name}</p>
+              <p className="font-serif text-2xl font-light tracking-[0.1em] text-wedding-primary mt-3">{bride.name}</p>
             </div>
           </div>
         ) : (
           <div className="flex items-center justify-center gap-5">
-            <span className="font-serif text-xl font-light tracking-[0.12em] text-wedding-primary">{groom.name}</span>
-            <span className="text-[10px] tracking-[0.3em] text-wedding-secondary/60">그리고</span>
-            <span className="font-serif text-xl font-light tracking-[0.12em] text-wedding-primary">{bride.name}</span>
+            <span className="font-serif text-2xl font-light tracking-[0.12em] text-wedding-primary">{groom.name}</span>
+            <span className="text-[11px] tracking-[0.3em] text-wedding-secondary/60">그리고</span>
+            <span className="font-serif text-2xl font-light tracking-[0.12em] text-wedding-primary">{bride.name}</span>
           </div>
         )}
       </div>
