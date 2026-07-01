@@ -1,0 +1,19 @@
+# wrangler pages dev 로컬 시크릿 템플릿.
+# 이 파일을 복사해 `.dev.vars`로 저장하고 실제 값을 채우세요.
+#   cp .dev.vars.example .dev.vars   (PowerShell: Copy-Item .dev.vars.example .dev.vars)
+# `.dev.vars`는 .gitignore에 있어 커밋되지 않습니다.
+#
+# 로컬 실행 예:
+#   npm run build
+#   npx wrangler pages dev dist --kv INVITATIONS
+# 카카오 콘솔 Redirect URI에 로컬 주소도 등록해야 합니다:
+#   http://127.0.0.1:8788/api/auth/kakao/callback
+
+# 카카오 REST API 키 (developers.kakao.com → 내 앱 → 앱 키 → REST API 키)
+KAKAO_REST_KEY=
+
+# 카카오 로그인 → 보안 → Client Secret (생성 후 활성화 ON)
+KAKAO_CLIENT_SECRET=
+
+# 세션 서명용 임의의 긴 랜덤 문자열 (남에게 노출 금지)
+SESSION_SECRET=

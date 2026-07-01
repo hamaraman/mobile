@@ -18,19 +18,30 @@ const LandingPage: React.FC<Props> = ({ onStart }) => {
       style={{ background: '#F4F0E8' }}
     >
       {/* 상단 로고 */}
-      <header className="flex items-center gap-3 px-8 py-6">
-        <div
-          className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold"
-          style={{ background: '#C9A36B', fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic' }}
-        >
-          D
+      <header className="flex items-center justify-between px-8 py-6">
+        <div className="flex items-center gap-3">
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold"
+            style={{ background: '#C9A36B', fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic' }}
+          >
+            D
+          </div>
+          <span
+            className="text-sm tracking-wider"
+            style={{ color: '#3A342D', fontFamily: 'Pretendard Variable, Pretendard, sans-serif', fontWeight: 500 }}
+          >
+            DODAM 모바일 청첩장
+          </span>
         </div>
-        <span
-          className="text-sm tracking-wider"
-          style={{ color: '#3A342D', fontFamily: 'Pretendard Variable, Pretendard, sans-serif', fontWeight: 500 }}
+
+        {/* 내 청첩장(로그인 필요 — 대시보드에서 로그인 유도) */}
+        <a
+          href="/?mine"
+          className="text-xs tracking-wide transition-colors hover:opacity-70"
+          style={{ color: '#9A8F80', fontFamily: 'Pretendard Variable, Pretendard, sans-serif' }}
         >
-          DODAM 모바일 청첩장
-        </span>
+          내 청첩장 →
+        </a>
       </header>
 
       {/* 메인 영역 */}

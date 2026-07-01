@@ -10,9 +10,11 @@ interface Props {
   onChange?: (data: WeddingData) => void;
   initialData?: WeddingData;
   isSubmitting?: boolean;
+  submitLabel?: string;       // 기본 '청첩장 발행하기'. 수정 모드에서 '수정 저장하기' 등.
+  submittingLabel?: string;   // 제출 중 라벨. 기본 '발행 중…'
 }
 
-const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData, isSubmitting }) => {
+const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData, isSubmitting, submitLabel = '청첩장 발행하기', submittingLabel = '발행 중…' }) => {
   const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<WeddingData>(initialData || {
@@ -525,7 +527,7 @@ const InvitationForm: React.FC<Props> = ({ onComplete, onChange, initialData, is
 
               <div className="flex gap-4 pt-8">
                 <button type="button" onClick={prevStep} className="w-24 text-[10px] uppercase tracking-widest text-gray-400 hover:text-wedding-primary transition-all">Back</button>
-                <button type="submit" disabled={isSubmitting} className="flex-1 bg-wedding-accent text-white py-5 text-sm tracking-[0.2em] font-bold hover:brightness-110 transition-all shadow-xl shadow-wedding-accent/20 disabled:opacity-60 disabled:cursor-not-allowed">{isSubmitting ? '발행 중…' : '청첩장 발행하기'}</button>
+                <button type="submit" disabled={isSubmitting} className="flex-1 bg-wedding-accent text-white py-5 text-sm tracking-[0.2em] font-bold hover:brightness-110 transition-all shadow-xl shadow-wedding-accent/20 disabled:opacity-60 disabled:cursor-not-allowed">{isSubmitting ? submittingLabel : submitLabel}</button>
               </div>
             </div>
           )}

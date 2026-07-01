@@ -11,6 +11,7 @@ interface Props {
   onChange: (data: WeddingData) => void;
   onPublish: (data: WeddingData) => void;
   isSubmitting: boolean;
+  publishLabel?: string;   // 수정 모드에서 '수정 저장' 등으로 덮어쓴다.
 }
 
 const SectionHeader: React.FC<{ num: number; title: string }> = ({ num, title }) => (
@@ -33,7 +34,7 @@ const inputCls = `
 `;
 const inputStyle = { borderColor: '#E6DDCE', color: '#3A342D' };
 
-const EditorPanel: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting }) => {
+const EditorPanel: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting, publishLabel }) => {
   const { toast } = useToast();
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
@@ -351,7 +352,7 @@ const EditorPanel: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting 
             fontFamily: 'Pretendard Variable, Pretendard, sans-serif',
           }}
         >
-          {isSubmitting ? '발행 중…' : '청첩장 발행하기'}
+          {isSubmitting ? '저장 중…' : (publishLabel || '청첩장 발행하기')}
         </button>
       </div>
     </div>

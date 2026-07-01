@@ -1,5 +1,8 @@
 // POST /api/invitations — 새 청첩장을 저장하고 고유 ID와 편집 토큰을 발급한다.
+// 로그인 필수: 발행자는 세션으로 인증되고, 청첩장에 소유자(ownerId)가 기록된다.
 // Cloudflare Pages Function. KV 바인딩 이름: INVITATIONS
+
+import { getUser } from '../_shared/auth.js';
 
 const MAX_BYTES = 5 * 1024 * 1024; // 5MB 상한(사진 base64 대비)
 
@@ -14,6 +17,12 @@ export async function onRequestPost(context) {
 
   if (!env.INVITATIONS) {
     return Response.json({ error: 'KV(INVITATIONS) 바인딩이 설정되지 않았습니다.' }, { status: 500 });
+  }
+
+  // 로그인 필수
+  const user = await getUser(request, env);
+  if (!user) {
+    return Response.json({ error: '로그인이 필요합니다.' }, { status: 401 });
   }
 
   let data;
@@ -33,9 +42,23 @@ export async function onRequestPost(context) {
 
   const id = shortId();
   const editToken = crypto.randomUUID();
-  const record = { data, editToken, createdAt: Date.now(), updatedAt: Date.now() };
+  const record = { data, editToken, ownerId: user.uid, createdAt: Date.now(), updatedAt: Date.now() };
 
   await env.INVITATIONS.put(id, JSON.stringify(record));
+
+  // 사용자 인덱스(user:<uid>)에 새 청첩장 id를 추가한다.
+  const key = `user:${user.uid}`;
+  let userRec;
+  try {
+    userRec = JSON.parse((await env.INVITATIONS.get(key)) || 'null');
+  } catch {
+    userRec = null;
+  }
+  if (!userRec || !Array.isArray(userRec.invitations)) {
+    userRec = { name: user.name, invitations: [], createdAt: Date.now() };
+  }
+  userRec.invitations.push(id);
+  await env.INVITATIONS.put(key, JSON.stringify(userRec));
 
   return Response.json({ id, editToken });
 }

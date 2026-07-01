@@ -10,9 +10,10 @@ interface Props {
   isSubmitting: boolean;
   autoSaved: boolean;
   onBack: () => void;
+  publishLabel?: string;   // 수정 모드에서 '수정 저장' 등으로 덮어쓴다.
 }
 
-const EditorLayout: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting, autoSaved, onBack }) => {
+const EditorLayout: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting, autoSaved, onBack, publishLabel }) => {
   const [mobilePreview, setMobilePreview] = useState(false);
 
   return (
@@ -77,7 +78,7 @@ const EditorLayout: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting
               fontFamily: 'Pretendard Variable, Pretendard, sans-serif',
             }}
           >
-            {isSubmitting ? '발행 중…' : '공유하기'}
+            {isSubmitting ? '저장 중…' : (publishLabel || '공유하기')}
           </button>
         </div>
       </header>
@@ -93,7 +94,7 @@ const EditorLayout: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting
             borderRight: '1px solid #E8E0D2',
           }}
         >
-          <EditorPanel data={data} onChange={onChange} onPublish={onPublish} isSubmitting={isSubmitting} />
+          <EditorPanel data={data} onChange={onChange} onPublish={onPublish} isSubmitting={isSubmitting} publishLabel={publishLabel} />
         </aside>
 
         {/* 중앙: 도트 텍스처 + 폰 목업 */}
