@@ -13,8 +13,11 @@ interface Props {
   publishLabel?: string;   // 수정 모드에서 '수정 저장' 등으로 덮어쓴다.
 }
 
+type DeviceType = 'iphone' | 'galaxy';
+
 const EditorLayout: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting, autoSaved, onBack, publishLabel }) => {
   const [mobilePreview, setMobilePreview] = useState(false);
+  const [device, setDevice] = useState<DeviceType>('iphone');
 
   return (
     <div className="flex flex-col h-screen overflow-hidden" style={{ background: '#F4F0E8' }}>
@@ -99,35 +102,122 @@ const EditorLayout: React.FC<Props> = ({ data, onChange, onPublish, isSubmitting
 
         {/* 중앙: 도트 텍스처 + 폰 목업 */}
         <main
-          className={`${mobilePreview ? 'flex' : 'hidden'} lg:flex flex-1 items-start justify-center overflow-y-auto pt-10 pb-16 bg-dot-texture`}
+          className={`${mobilePreview ? 'flex' : 'hidden'} lg:flex flex-1 flex-col items-center overflow-y-auto pt-6 pb-16 bg-dot-texture`}
         >
-          <div className="flex flex-col items-center">
-            {/* 폰 목업 프레임 */}
-            <div
-              className="relative rounded-[3rem] overflow-hidden border-[8px] shadow-2xl flex-shrink-0"
-              style={{
-                width: '375px',
-                height: '812px',
-                borderColor: '#1A1714',
-                background: '#FBF8F2',
-              }}
-            >
-              {/* 노치 */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-[#1A1714] rounded-b-2xl z-20" />
-              {/* 상태바 시간 */}
-              <div className="absolute top-1.5 left-8 text-[10px] font-medium z-20" style={{ color: '#1A1714' }}>9:41</div>
+          {/* 기기 토글 (아이폰 17 Pro ↔ 갤럭시 S25 Ultra) */}
+          <div
+            className="mb-5 inline-flex p-1 rounded-full border"
+            style={{ background: '#FFFDF9', borderColor: '#E8E0D2' }}
+          >
+            {(['iphone', 'galaxy'] as DeviceType[]).map(kind => {
+              const active = device === kind;
+              const label = kind === 'iphone' ? 'iPhone 17 Pro' : 'Galaxy S25 Ultra';
+              return (
+                <button
+                  key={kind}
+                  onClick={() => setDevice(kind)}
+                  className="text-xs px-3.5 py-1.5 rounded-full transition-colors"
+                  style={{
+                    background: active ? '#3A342D' : 'transparent',
+                    color: active ? '#FFFDF9' : '#9A8F80',
+                    fontFamily: 'Pretendard Variable, Pretendard, sans-serif',
+                    fontWeight: active ? 500 : 400,
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
 
-              {/* 청첩장 본문 */}
-              <div className="w-full h-full overflow-y-auto" style={{ paddingTop: '24px' }}>
-                <InvitationView data={data} isPreview />
+          <div className="flex flex-col items-center">
+            {device === 'iphone' ? (
+              /* iPhone 17 Pro — Dynamic Island */
+              <div
+                className="relative rounded-[3rem] overflow-hidden border-[8px] shadow-2xl flex-shrink-0"
+                style={{
+                  width: '375px',
+                  height: '812px',
+                  borderColor: '#1A1714',
+                  background: '#FBF8F2',
+                }}
+              >
+                {/* 다이나믹 아일랜드 */}
+                <div
+                  className="absolute left-1/2 -translate-x-1/2 z-20"
+                  style={{
+                    top: '10px',
+                    width: '112px',
+                    height: '30px',
+                    background: '#1A1714',
+                    borderRadius: '9999px',
+                  }}
+                />
+                {/* 상태바 시간 */}
+                <div className="absolute top-2.5 left-7 text-[11px] font-semibold z-20" style={{ color: '#1A1714' }}>9:41</div>
+                {/* 상태바 우측 아이콘(간단 표기) */}
+                <div className="absolute top-2.5 right-7 flex items-center gap-1 z-20" style={{ color: '#1A1714' }}>
+                  <span className="text-[10px] font-medium">100%</span>
+                  <span
+                    className="inline-block rounded-[3px] border"
+                    style={{ width: '18px', height: '9px', borderColor: '#1A1714' }}
+                  >
+                    <span className="block h-full rounded-[2px]" style={{ background: '#1A1714', width: '100%' }} />
+                  </span>
+                </div>
+
+                {/* 청첩장 본문 */}
+                <div className="w-full h-full overflow-y-auto" style={{ paddingTop: '52px' }}>
+                  <InvitationView data={data} isPreview />
+                </div>
               </div>
-            </div>
+            ) : (
+              /* Galaxy S25 Ultra — 펀치홀 + 각진 코너 */
+              <div
+                className="relative rounded-[2.25rem] overflow-hidden border-[5px] shadow-2xl flex-shrink-0"
+                style={{
+                  width: '360px',
+                  height: '820px',
+                  borderColor: '#0E0E10',
+                  background: '#FBF8F2',
+                }}
+              >
+                {/* 펀치홀 카메라 */}
+                <div
+                  className="absolute left-1/2 -translate-x-1/2 z-20 rounded-full"
+                  style={{
+                    top: '10px',
+                    width: '11px',
+                    height: '11px',
+                    background: '#0E0E10',
+                    boxShadow: '0 0 0 1.5px #1F1F22',
+                  }}
+                />
+                {/* 상태바 시간 */}
+                <div className="absolute top-2 left-6 text-[11px] font-semibold z-20" style={{ color: '#1A1714' }}>9:41</div>
+                {/* 상태바 우측 아이콘 */}
+                <div className="absolute top-2 right-6 flex items-center gap-1 z-20" style={{ color: '#1A1714' }}>
+                  <span className="text-[10px] font-medium">100%</span>
+                  <span
+                    className="inline-block rounded-[3px] border"
+                    style={{ width: '18px', height: '9px', borderColor: '#1A1714' }}
+                  >
+                    <span className="block h-full rounded-[2px]" style={{ background: '#1A1714', width: '100%' }} />
+                  </span>
+                </div>
+
+                {/* 청첩장 본문 */}
+                <div className="w-full h-full overflow-y-auto" style={{ paddingTop: '32px' }}>
+                  <InvitationView data={data} isPreview />
+                </div>
+              </div>
+            )}
 
             <p
               className="mt-4 text-xs italic"
               style={{ fontFamily: 'Cormorant Garamond, serif', color: '#9A8F80' }}
             >
-              Mobile Preview
+              {device === 'iphone' ? 'iPhone 17 Pro Preview' : 'Galaxy S25 Ultra Preview'}
             </p>
           </div>
         </main>
