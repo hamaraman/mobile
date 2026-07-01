@@ -23,6 +23,9 @@ dist-ssr
 # wrangler pages dev 로컬 시크릿 (카카오 OAuth 등)
 .dev.vars
 
+# 스크래치용 스크린샷(콘솔 캡처 등) — 시크릿이 담길 수 있어 커밋 금지
+img/img.png
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
