@@ -67,12 +67,12 @@ npm run dev
 
 ---
 
-## 🔐 카카오 로그인 & 내 청첩장
+## 🔐 구글 로그인 & 내 청첩장
 
-청첩장 **발행은 로그인이 필요**합니다. 카카오 계정으로 로그인하면 내가 만든 청첩장이
+청첩장 **발행은 로그인이 필요**합니다. 구글 계정으로 로그인하면 내가 만든 청첩장이
 계정에 묶여, 브라우저나 기기를 바꿔도 `/?mine` 대시보드에서 보고 수정·삭제할 수 있습니다.
 
-- 인증은 카카오 REST OAuth(인가 코드) 리다이렉트 방식이며, 세션은 서버가 서명한
+- 인증은 구글 OAuth 2.0(인가 코드) 리다이렉트 방식이며, 세션은 서버가 서명한
   httpOnly 쿠키로 관리합니다(별도 세션 저장소 없음).
 - 관련 서버 함수: `functions/api/auth/*`, 공용 헬퍼 `functions/_shared/auth.js`.
 - 소유권은 기존 `INVITATIONS` KV에 함께 저장됩니다(청첩장 레코드의 `ownerId`,
@@ -84,18 +84,18 @@ Cloudflare Pages 프로젝트 환경변수에 등록:
 
 | 변수 | 설명 |
 | --- | --- |
-| `KAKAO_REST_KEY` | 카카오 REST API 키 |
-| `KAKAO_CLIENT_SECRET` | 카카오 보안 → Client Secret(활성화 필요) |
+| `GOOGLE_CLIENT_ID` | 구글 OAuth 클라이언트 ID |
+| `GOOGLE_CLIENT_SECRET` | 구글 OAuth 클라이언트 보안 비밀 |
 | `SESSION_SECRET` | 세션 서명용 임의의 긴 랜덤 문자열 |
 
-카카오 개발자 콘솔:
-- 카카오 로그인 **활성화 ON**
-- **Redirect URI** 등록: `https://<배포도메인>/api/auth/kakao/callback`
-- **동의항목**: 닉네임(`profile_nickname`)
+구글 클라우드 콘솔(console.cloud.google.com):
+- **OAuth 동의 화면** 구성(외부) 후 게시
+- **사용자 인증 정보 → OAuth 2.0 클라이언트 ID**(웹 애플리케이션) 생성
+- **승인된 리디렉션 URI** 등록: `https://<배포도메인>/api/auth/google/callback`
 
 > ⚠️ 로그인·발행은 Pages Functions가 필요하므로 `npm run dev`(vite)로는 테스트되지
 > 않습니다. `wrangler pages dev`로 실행하고 `INVITATIONS` KV 바인딩과 위 변수(`.dev.vars`)를
-> 연결해야 합니다. 로컬 Redirect URI는 `http://127.0.0.1:8788/api/auth/kakao/callback`.
+> 연결해야 합니다. 로컬 Redirect URI는 `http://127.0.0.1:8788/api/auth/google/callback`.
 
 ---
 

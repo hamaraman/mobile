@@ -1,4 +1,4 @@
-// GET /api/auth/kakao/callback — 카카오 인가 코드를 받아 토큰을 교환하고
+// GET /api/auth/google/callback — 구글 인가 코드를 받아 토큰을 교환하고
 // 사용자 정보를 조회한 뒤 세션 쿠키를 발급하고 /?mine 으로 돌려보낸다.
 // Cloudflare Pages Function. KV 바인딩: INVITATIONS
 
@@ -14,8 +14,8 @@ export async function onRequestGet(context) {
   const url = new URL(request.url);
   const origin = url.origin;
 
-  // KAKAO_CLIENT_SECRET은 선택 사항(카카오 콘솔에서 Client Secret을 활성화한 경우에만 필요).
-  if (!env.KAKAO_REST_KEY || !env.SESSION_SECRET) {
+  // 구글은 confidential 클라이언트라 Client Secret이 항상 필요하다.
+  if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !env.SESSION_SECRET) {
     return fail(origin, '서버 환경변수 미설정');
   }
 
@@ -29,21 +29,20 @@ export async function onRequestGet(context) {
     return fail(origin, 'state 불일치');
   }
 
-  const redirectUri = `${origin}/api/auth/kakao/callback`;
+  const redirectUri = `${origin}/api/auth/google/callback`;
 
   // 1) 인가 코드 → 액세스 토큰
   const tokenParams = {
     grant_type: 'authorization_code',
-    client_id: env.KAKAO_REST_KEY,
+    client_id: env.GOOGLE_CLIENT_ID,
+    client_secret: env.GOOGLE_CLIENT_SECRET,
     redirect_uri: redirectUri,
     code,
   };
-  // Client Secret을 활성화한 경우에만 함께 보낸다.
-  if (env.KAKAO_CLIENT_SECRET) tokenParams.client_secret = env.KAKAO_CLIENT_SECRET;
 
   let tokenRes;
   try {
-    tokenRes = await fetch('https://kauth.kakao.com/oauth/token', {
+    tokenRes = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' },
       body: new URLSearchParams(tokenParams),
@@ -56,15 +55,16 @@ export async function onRequestGet(context) {
   const accessToken = token.access_token;
   if (!accessToken) return fail(origin, '액세스 토큰 없음');
 
-  // 2) 액세스 토큰 → 사용자 정보
-  const meRes = await fetch('https://kapi.kakao.com/v2/user/me', {
+  // 2) 액세스 토큰 → 사용자 정보(OpenID Connect userinfo)
+  const meRes = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
   if (!meRes.ok) return fail(origin, '사용자 조회 실패');
   const me = await meRes.json();
-  const uid = me.id != null ? String(me.id) : null;
+  // sub는 구글 계정의 안정적 고유 ID.
+  const uid = me.sub != null ? String(me.sub) : null;
   if (!uid) return fail(origin, '사용자 id 없음');
-  const name = me.properties?.nickname || me.kakao_account?.profile?.nickname || '카카오 사용자';
+  const name = me.name || me.email || '구글 사용자';
 
   // 3) 사용자 레코드 최초 생성(있으면 이름만 갱신)
   if (env.INVITATIONS) {

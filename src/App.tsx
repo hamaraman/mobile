@@ -105,14 +105,14 @@ function App() {
     if (params.get('login') !== 'error') return;
     const reason = params.get('reason') || '';
     const detail: Record<string, string> = {
-      '서버 환경변수 미설정': '서버 설정이 완료되지 않았습니다. (KAKAO_REST_KEY / SESSION_SECRET 확인 필요)',
+      '서버 환경변수 미설정': '서버 설정이 완료되지 않았습니다. (GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET / SESSION_SECRET 확인 필요)',
       'state 불일치': '보안 확인(state)에 실패했습니다. 쿠키가 차단됐거나 시간이 초과됐을 수 있어요. 다시 시도해주세요.',
-      '토큰 교환 실패': '카카오 인증에 실패했습니다. 리다이렉트 URI 등록 또는 REST 키 설정을 확인해주세요.',
-      '토큰 요청 실패': '카카오 서버와 통신에 실패했습니다. 잠시 후 다시 시도해주세요.',
-      '사용자 조회 실패': '카카오 사용자 정보를 가져오지 못했습니다. 다시 시도해주세요.',
+      '토큰 교환 실패': '구글 인증에 실패했습니다. 리다이렉트 URI 등록 또는 클라이언트 설정을 확인해주세요.',
+      '토큰 요청 실패': '구글 서버와 통신에 실패했습니다. 잠시 후 다시 시도해주세요.',
+      '사용자 조회 실패': '구글 사용자 정보를 가져오지 못했습니다. 다시 시도해주세요.',
     };
     const msg = detail[reason]
-      || (reason ? `카카오 로그인에 실패했습니다. (${reason})` : '카카오 로그인에 실패했습니다. 다시 시도해주세요.');
+      || (reason ? `구글 로그인에 실패했습니다. (${reason})` : '구글 로그인에 실패했습니다. 다시 시도해주세요.');
     toast(msg, 'error');
     // 사유가 주소창에 계속 남지 않도록 정리한다.
     window.history.replaceState({}, '', window.location.pathname);
@@ -208,7 +208,7 @@ function App() {
 
   // 기존 청첩장 수정은 소유권이 필요하므로 로그인 필수
   if (EDIT_ID && !user) {
-    return <LoginGate title="청첩장 수정" message="본인이 만든 청첩장만 수정할 수 있어요. 카카오로 로그인해주세요." />;
+    return <LoginGate title="청첩장 수정" message="본인이 만든 청첩장만 수정할 수 있어요. 구글로 로그인해주세요." />;
   }
   // 수정 대상 로딩 중
   if (EDIT_ID && editLoading) return <Spinner />;

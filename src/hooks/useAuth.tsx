@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { fetchMe, logout as apiLogout, startKakaoLogin, type AuthUser } from '../utils/api';
+import { fetchMe, logout as apiLogout, startGoogleLogin, type AuthUser } from '../utils/api';
 import { AuthContext } from './authContext';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -14,7 +14,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => { active = false; };
   }, []);
 
-  const login = useCallback(() => { startKakaoLogin(); }, []);
+  const login = useCallback(() => { startGoogleLogin(); }, []);
 
   const logout = useCallback(async () => {
     await apiLogout();

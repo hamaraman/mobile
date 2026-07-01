@@ -90,7 +90,7 @@ export async function deleteInvitation(id: string): Promise<void> {
   if (!res.ok) throw new Error(body.error || '삭제에 실패했습니다.');
 }
 
-// 카카오 로그인 시작(리다이렉트). 로그인 후 /?mine 으로 복귀한다.
-export function startKakaoLogin(): void {
-  window.location.href = '/api/auth/kakao';
+// 구글 로그인 시작(리다이렉트). 로그인 후 /?mine 으로 복귀한다.
+export function startGoogleLogin(): void {
+  window.location.href = '/api/auth/google';
 }

@@ -4,7 +4,7 @@ import type { AuthUser } from '../utils/api';
 export interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
-  login: () => void;              // 카카오 로그인 시작(리다이렉트)
+  login: () => void;              // 구글 로그인 시작(리다이렉트)
   logout: () => Promise<void>;    // 로그아웃 후 상태 초기화
 }
 

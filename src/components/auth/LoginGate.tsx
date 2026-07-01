@@ -1,9 +1,9 @@
 import { useAuth } from '../../hooks/authContext';
 
-// 로그인이 필요한 화면(발행·내 청첩장) 진입 시 노출되는 안내 + 카카오 로그인 버튼.
+// 로그인이 필요한 화면(발행·내 청첩장) 진입 시 노출되는 안내 + 구글 로그인 버튼.
 export default function LoginGate({
   title = '로그인이 필요합니다',
-  message = '카카오로 로그인하면 내 청첩장을 어느 기기에서든 관리할 수 있어요.',
+  message = '구글로 로그인하면 내 청첩장을 어느 기기에서든 관리할 수 있어요.',
 }: {
   title?: string;
   message?: string;
@@ -17,18 +17,18 @@ export default function LoginGate({
         <p className="text-sm text-gray-500 leading-relaxed max-w-xs mx-auto">{message}</p>
       </div>
 
-      {/* 카카오 로그인 버튼 (카카오 브랜드 컬러 #FEE500) */}
+      {/* 구글 로그인 버튼 (흰 배경 + 구글 G 로고) */}
       <button
         onClick={login}
-        className="flex items-center justify-center gap-2 w-full max-w-xs py-3.5 rounded-lg bg-[#FEE500] text-[#191600] text-sm font-medium hover:brightness-95 transition-all shadow-sm"
+        className="flex items-center justify-center gap-2.5 w-full max-w-xs py-3.5 rounded-lg bg-white border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-all shadow-sm"
       >
         <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-          <path
-            fill="#191600"
-            d="M9 1.5C4.86 1.5 1.5 4.14 1.5 7.4c0 2.1 1.4 3.94 3.5 5l-.9 3.3c-.08.29.25.52.5.35l3.96-2.62c.15.01.29.02.44.02 4.14 0 7.5-2.64 7.5-5.95S13.14 1.5 9 1.5Z"
-          />
+          <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62Z" />
+          <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.02-3.7H.96v2.34A9 9 0 0 0 9 18Z" />
+          <path fill="#FBBC05" d="M3.98 10.72a5.4 5.4 0 0 1 0-3.44V4.94H.96a9 9 0 0 0 0 8.12l3.02-2.34Z" />
+          <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.46 3.44 1.35l2.58-2.58C13.47.9 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.02 2.34C4.68 5.16 6.66 3.58 9 3.58Z" />
         </svg>
-        카카오로 로그인
+        구글로 로그인
       </button>
     </div>
   );
